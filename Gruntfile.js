@@ -45,7 +45,8 @@ module.exports = function(grunt) {
       demo: 'demo',
       demoScripts: '<%= dirs.demo %>/scripts',
       demoLib: '<%= dirs.demo %>/lib',
-      docs: 'docs'
+      docs: 'docs',
+      test: 'test'
     },
 
     files: {
@@ -89,10 +90,6 @@ module.exports = function(grunt) {
       }
     },
 
-    qunit: {
-      files: ['test/*.html']
-    },
-
     jshint: {
       files: srcFiles.concat(demoSrcFiles).concat('Gruntfile.js'),
       options: {
@@ -134,15 +131,53 @@ module.exports = function(grunt) {
           outdir: '<%= dirs.docs %>'
         }
       }
-    }
+    },
+
+    connect: {
+      options: {
+        port: 9000,
+        livereload: 35729,
+        // Change this to '0.0.0.0' to access the server from outside
+        hostname: '0.0.0.0',
+        open: {
+          appName: 'google-chrome-stable'
+        }
+      },
+      test: {
+        options: {
+          open: false,
+          port: 9001,
+          middleware: function(connect) {
+            return [
+              connect().use('/dist', connect.static('dist')),
+              connect.static('test')
+            ];
+          }
+        }
+      }
+    },
+
+    // Mocha testing framework configuration options
+    mocha: {
+      all: {
+        options: {
+          run: true,
+          urls: [
+            'http://<%= connect.test.options.hostname %>:' +
+            '<%= connect.test.options.port %>/index.html'
+          ]
+        }
+      }
+    },
 
   });
 
   grunt.registerTask('hookmeup', ['shell:hooks']);
   grunt.registerTask('docs', ['yuidoc']);
-  grunt.registerTask('test', ['jshint', 'concat_sourcemap', 'qunit']);
-  grunt.registerTask('dist', ['jshint', 'concat', 'qunit', 'uglify', 'docs']);
+  grunt.registerTask('test',
+    ['jshint', 'concat_sourcemap', 'connect:test', 'mocha']);
+  grunt.registerTask('dist', ['jshint', 'concat', 'uglify', 'docs']);
   grunt.registerTask('default',
-   ['jshint', 'concat_sourcemap', 'qunit', 'uglify']);
+   ['jshint', 'concat_sourcemap', 'connect:test', 'mocha']);
 
 };
