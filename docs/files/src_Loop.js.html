@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>src/Loop.js - strongforce</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+            
+                <h1><img src="../assets/css/logo.png" title="strongforce"></h1>
+            
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 0.1.0</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+    <h2 class="off-left">APIs</h2>
+    <div id="api-tabview" class="tabview">
+        <ul class="tabs">
+            <li><a href="#api-classes">Classes</a></li>
+            <li><a href="#api-modules">Modules</a></li>
+        </ul>
+
+        <div id="api-tabview-filter">
+            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+        </div>
+
+        <div id="api-tabview-panel">
+            <ul id="api-classes" class="apis classes">
+            
+                <li><a href="../classes/EventEmitter.html">EventEmitter</a></li>
+            
+                <li><a href="../classes/Loop.html">Loop</a></li>
+            
+                <li><a href="../classes/LoopOptions.html">LoopOptions</a></li>
+            
+                <li><a href="../classes/Model.html">Model</a></li>
+            
+                <li><a href="../classes/Render.html">Render</a></li>
+            
+                <li><a href="../classes/Simulator.html">Simulator</a></li>
+            
+                <li><a href="../classes/StrongforceModelEvent.html">StrongforceModelEvent</a></li>
+            
+            </ul>
+
+            <ul id="api-modules" class="apis modules">
+            
+                <li><a href="../modules/strongforce.html">strongforce</a></li>
+            
+            </ul>
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+        Show:
+        <label for="api-show-inherited">
+            <input type="checkbox" id="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label for="api-show-protected">
+            <input type="checkbox" id="api-show-protected">
+            Protected
+        </label>
+
+        <label for="api-show-private">
+            <input type="checkbox" id="api-show-private">
+            Private
+        </label>
+        <label for="api-show-deprecated">
+            <input type="checkbox" id="api-show-deprecated">
+            Deprecated
+        </label>
+
+    </div>
+
+
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <h1 class="file-heading">File: src/Loop.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+strongforce.Loop = (function () {
+  &#x27;use strict&#x27;;
+
+  var root = this;
+
+  /**
+   * Options to customize the loop.
+   *
+   * @class LoopOptions
+   */
+  var defaultLoopOptions = {
+
+    /**
+     * The target model of the loop.
+     *
+     * @property rootModel
+     * @type {Model}
+     * @default undefined
+     */
+    rootModel: undefined,
+
+    /**
+     * Max time in milliseconds to be simulated on each frame to avoid making
+     * the simulation stage to take more time than that being simulated
+     *
+     * The parameter is important to avoid _spiral of death_, an effect produced
+     * due to the accumulation of a _time debt_ from frame to frame what leads
+     * to longer and longer freezes of the loop.
+     *
+     * @property maxSimulationTime
+     * @type {Number}
+     * @default 300 milliseconds
+     */
+    maxSimulationTime: 300,
+
+    /**
+     * Time in milliseconds to be simulated in each tick. As a decoupled loop,
+     * ticks per frame can vary from frame to frame.
+     *
+     * If set to 0, the simulation is coupled to the frame rate.
+     *
+     * @property simulationDelta
+     * @type {Number}
+     * @default 10 milliseconds
+     */
+    simulationDelta: 10
+  };
+
+  /* TODO: Add a default implementation for fallback. */
+  var requestAnimationFrame = root.requestAnimationFrame;
+
+  /**
+   * The loop is the main piece of strongforce. It coordinates simulation and
+   * rendering stages on the model. A loop takes a root model to traverse in
+   * each stage.
+   *
+   * Despite it is able to simulate the model at a constant rate, the loop is
+   * driven by &#x60;window.requestAnimationFrame()&#x60; to schedule next loop step so
+   * rendering is coined to this rate. Foreso, this is the **frame rate**
+   * as well.
+   *
+   * @class Loop
+   * @constructor
+   * @param customOptions {LoopOptions} Hash to customize the loop. The
+   * {{#crossLink &quot;LoopOptions/rootModel:property&quot;}}{{/crossLink}} key
+   * is mandatory.
+   */
+  function Loop(customOptions) {
+
+    checkOptions(customOptions);
+
+    var isRunning = false,
+        options = getCustomizedOptions(customOptions),
+        rootModel = options.rootModel;
+
+    var t, newTime, avgFrameTime = 0, currentTime,
+        pauseTime, accumulator, startTime,
+        simulationQueue = [];
+
+    /**
+     * The model target of loop.
+     *
+     * @property rootModel
+     * @type {Model}
+     * @readOnly
+     */
+    Object.defineProperty(this, &#x27;rootModel&#x27;, { value: rootModel });
+
+    /**
+     * Start the loop from the beginning, setting the current simulation time to
+     * 0.
+     *
+     * @method start
+     */
+    function start() {
+      if (!isRunning) {
+        reset(0);
+        resume();
+      }
+    }
+
+    /**
+     * Pause and force the current simulation time to 0 or other moment if
+     * indicated.
+     *
+     * @method reset
+     * @param [newOffset=0] {Number} Time in milliseconds for the current
+     * simulation time.
+     */
+    function reset(newOffset) {
+      pause();
+      t = newOffset || 0;
+      currentTime = undefined;
+      accumulator = 0;
+    }
+
+    /**
+     * Freezes the loop.
+     *
+     * @method pause
+     */
+    function pause() {
+      pauseTime = Date.now();
+      isRunning = false;
+    }
+
+    /**
+     * Continue with the loop.
+     *
+     * @method resume
+     */
+    function resume() {
+      if (!isRunning) {
+        requestAnimationFrame(loopStep);
+        isRunning = true;
+      }
+    }
+
+    /**
+     * Performs one, **and only one** loop step.
+     *
+     * @method step
+     * @param [timeToSimulate] {Number} Time to be simulated in this step.
+     * It defaults in
+     * {{#crossLink &quot;LoopOptions/simulationDelta:property&quot;}}{{/crossLink}}.
+     */
+    function step(timeToSimulate) {
+      timeToSimulate = timeToSimulate || options.simulationDelta;
+      if (!isRunning) {
+        loopStep(undefined, timeToSimulate);
+      }
+    }
+
+    /**
+     * The loop step is based on the article **Fix your timestep!**
+     * (http://gafferongames.com/game-physics/fix-your-timestep/) by
+     * _Glenn Fiedler_.
+     *
+     * The loop step is the core of strongforce. It is in charge of orchestrate
+     * the simulation and rendering stages. From frame to frame, the time frame
+     * is recorded and simulated in chunks of constant rate given by the
+     * {{#crossLink &quot;LoopOptions/simulationDelta:property&quot;}}{{/crossLink}}
+     * option.
+     *
+     * In strongforce, a {{#crossLink &quot;Model&quot;}}{{/crossLink}} instance has
+     * _facets_. A facet is a object in charge of provide a specific
+     * functionality for the model. This object can be a function or a
+     * function-like object implementing &#x60;Function.prototype.apply()&#x60; signature.
+     *
+     * During simulation and rendering stages, the
+     * {{#crossLink &quot;Loop/rootModel:property&quot;}}{{/crossLink}} is visited in a
+     * recursive way by
+     * calling {{#crossLink &quot;Model/simulate:method&quot;}}{{/crossLink}} or
+     * {{#crossLink &quot;Model/render:method&quot;}}{{/crossLink}} methods on each model
+     * in pre-order, i.e. first the model itself, then its submodels.
+     *
+     * Actually, each facet is called twice, one before visiting the children
+     * and another one after visiting them all. These calls are named pre-call
+     * and post-call and are distinguished by passing a &#x60;isPostCall&#x60; flag to
+     * the facet.
+     *
+     * @method loopStep
+     * @param requestAnimationTime {DOMHighResTimeStamp} [Not used].
+     * @param forcedTimeToSimulate {Number} Milliseconds to simulate.
+     * @private
+     */
+    function loopStep(requestAnimationTime, forcedTimeToSimulate) {
+      var frameTime;
+
+      if (!isRunning) { return; }
+
+      requestAnimationFrame(loopStep);
+
+      // Take the time now
+      newTime = Date.now();
+      (currentTime === undefined) &amp;&amp; (currentTime = newTime);
+
+      // Calculates frame time
+      frameTime = newTime - currentTime;
+      currentTime = newTime;
+
+      // Calculating FPS according to:
+      // http://stackoverflow.com/questions/4787431/check-fps-in-\
+      // js#answer-5111475
+      avgFrameTime += (frameTime - avgFrameTime) / 20;
+
+      // The simulation time can not be more than a specified max in order
+      // to avoid simulation times longer than the time being simulated.
+      var timeToSimulate = Math.min(
+        forcedTimeToSimulate !== undefined ? forcedTimeToSimulate : frameTime,
+        options.maxSimulationTime
+      );
+
+      // Simulate in higher precission chunks unless the feature is
+      // disabled (simulationDelta set to 0). Keeping the accumulator updated
+      // we can maintain a regular rate of simulation.
+      accumulator += timeToSimulate;
+      var dt = options.simulationDelta || accumulator;
+      while (accumulator &gt;= dt) {
+        /*
+        TODO: Consider to make something similar for rendering:
+          Provide an &#x60;emit()&#x60; function as &#x60;scheduleUpdate()&#x60;, then apply some
+          sorting, and finally run these rendering tasks.
+        */
+        simulate(rootModel, t, dt, scheduleUpdate);
+        runSimulation();
+        t += dt;
+        accumulator -= dt;
+      }
+
+      // The interpolation value is a measure of where we are between two
+      // simulation ticks. It can be interesting to interpolate animations
+      // or other render aspects.
+      var interpolationValue = accumulator / dt;
+
+      render(rootModel, interpolationValue);
+
+      startTime = Date.now();
+    }
+
+    function render(model, interpolationValue) {
+      model.traverse(&#x27;render&#x27;, &#x27;getRenderSubmodels&#x27;, [interpolationValue]);
+    }
+
+    function simulate(model, t, dt, scheduleUpdate) {
+      model.traverse(
+        &#x27;simulate&#x27;, &#x27;getSimulateSubmodels&#x27;,
+        [t, dt, scheduleUpdate]
+      );
+    }
+
+    function scheduleUpdate(f) {
+      simulationQueue.push(f);
+    }
+
+    function runSimulation() {
+      while (simulationQueue.length) {
+        simulationQueue.shift()();
+      }
+    }
+
+    return {
+      start: start,
+      reset: reset,
+      pause: pause,
+      resume: resume,
+      step: step,
+      /**
+       * Average frame time.
+       *
+       * @property frameTime
+       * @readOnly
+       */
+      get frameTime() {
+        return avgFrameTime;
+      }
+    };
+  }
+
+  function checkOptions(customOptions) {
+    if (customOptions.rootModel === undefined) {
+      throw new Error(&#x27;The &#x60;rootModel&#x60; key is mandatory!&#x27;);
+    }
+  }
+
+  function getCustomizedOptions(customOptions) {
+    var result = {};
+    for (var key in defaultLoopOptions) {
+      if (defaultLoopOptions.hasOwnProperty(key)) {
+        result[key] = customOptions[key] || defaultLoopOptions[key];
+      }
+    }
+    return result;
+  }
+
+  return Loop;
+}.call(this));
+
+    </pre>
+</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

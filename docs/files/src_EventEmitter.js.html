@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>src/EventEmitter.js - strongforce</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+            
+                <h1><img src="../assets/css/logo.png" title="strongforce"></h1>
+            
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 0.1.0</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+    <h2 class="off-left">APIs</h2>
+    <div id="api-tabview" class="tabview">
+        <ul class="tabs">
+            <li><a href="#api-classes">Classes</a></li>
+            <li><a href="#api-modules">Modules</a></li>
+        </ul>
+
+        <div id="api-tabview-filter">
+            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+        </div>
+
+        <div id="api-tabview-panel">
+            <ul id="api-classes" class="apis classes">
+            
+                <li><a href="../classes/EventEmitter.html">EventEmitter</a></li>
+            
+                <li><a href="../classes/Loop.html">Loop</a></li>
+            
+                <li><a href="../classes/LoopOptions.html">LoopOptions</a></li>
+            
+                <li><a href="../classes/Model.html">Model</a></li>
+            
+                <li><a href="../classes/Render.html">Render</a></li>
+            
+                <li><a href="../classes/Simulator.html">Simulator</a></li>
+            
+                <li><a href="../classes/StrongforceModelEvent.html">StrongforceModelEvent</a></li>
+            
+            </ul>
+
+            <ul id="api-modules" class="apis modules">
+            
+                <li><a href="../modules/strongforce.html">strongforce</a></li>
+            
+            </ul>
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+        Show:
+        <label for="api-show-inherited">
+            <input type="checkbox" id="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label for="api-show-protected">
+            <input type="checkbox" id="api-show-protected">
+            Protected
+        </label>
+
+        <label for="api-show-private">
+            <input type="checkbox" id="api-show-private">
+            Private
+        </label>
+        <label for="api-show-deprecated">
+            <input type="checkbox" id="api-show-deprecated">
+            Deprecated
+        </label>
+
+    </div>
+
+
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <h1 class="file-heading">File: src/EventEmitter.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+
+strongforce.EventEmitter = (function () {
+  &#x27;use strict&#x27;;
+
+  /**
+   * Provide methods for dispatching events and add or remove listeners to
+   * specified types of events.
+   *
+   * @class EventEmitter
+   * @constructor
+   */
+  function EventEmitter() {
+    /**
+     * Keeps the list of listeners by event type.
+     *
+     * @property _listeners
+     * @type {Object}
+     * @private
+     * @final
+     */
+    Object.defineProperty(this, &#x27;_listeners&#x27;, { value: {} });
+  }
+
+  /**
+   * Emit an event from the instance.
+   *
+   * @method dispatchEvent
+   * @param type {String} The type of the event.
+   * @param [event=Object] {Object} Hash of event&#x27;s properties.
+   */
+  EventEmitter.prototype.dispatchEvent = function(type, event) {
+    event = event || {};
+    event.type = type;
+    event.target = this;
+    event.timestamp = Date.now();
+    this._runListeners(type, event);
+  };
+
+  /**
+   * Synchronously run the listeners for an event type removing _only once_
+   * listeners.
+   *
+   * @method _runListeners
+   * @param type {String} The type of the event for which the listeners
+   * will be executed.
+   * @param event {Object} Hash of event&#x27;s properties.
+   * @private
+   */
+  EventEmitter.prototype._runListeners = function(type, event) {
+    var listeners = this._listeners[type] || [],
+        newListeners = [];
+
+    listeners.forEach(function onCallback(pair) {
+      var callback = pair[0];
+      var once = pair[1];
+      callback(event);
+      if (!once) { newListeners.push(pair); }
+    });
+    this._listeners[type] = newListeners;
+  };
+
+  /**
+   * Add a listener for an event type to be executed synchronously every time
+   * the model emits an event of the provided type. You can optionally indicate
+   * the listener should run only once.
+   *
+   * @method addEventListener
+   * @param type {String} The type of the event for which the listener
+   * will be attached.
+   * @param callback {Function} The listener is a function that will receive a
+   * {{#crossLink &quot;StrongforceModelEvent&quot;}}{{/crossLink}} parameter.
+   * @param [once=false] {Boolean} If set to &#x60;true&#x60;, the listener will be
+   * executed only once and automatically removed after the execution.
+   */
+  EventEmitter.prototype.addEventListener = function(type, callback, once) {
+    var listeners = this._listeners,
+        typeListeners = listeners[type] = (listeners[type] || []);
+
+    if (!typeListeners.some(alreadyListening)) {
+      typeListeners.push([callback, once]);
+    }
+
+    function alreadyListening(pair) {
+      return pair[0] === callback;
+    }
+  };
+
+  /**
+   * Remove one listener for the specified event type.
+   *
+   * @method removeEventListener
+   * @param type {String} The type of the event for which the listener
+   * will be removed.
+   * @param callback {Function} The listener to remove.
+   */
+  EventEmitter.prototype.removeEventListener = function(type, callback) {
+    var listeners = this._listeners,
+        typeListeners = listeners[type] = listeners[type] || [],
+        position = -1;
+
+    for (var l = 0, pair; (pair = typeListeners[l]) &amp;&amp; position &lt; 0; l++) {
+      if (pair[0] === callback) { position = l; }
+    }
+
+    if (position !== -1) {
+      listeners[type].splice(position, 1);
+    }
+  };
+
+  /**
+   * Remove all listeners for an event type.
+   *
+   * @method removeEventListener
+   * @param type {String} The type of the event for which the listener
+   * will be removed.
+   */
+  EventEmitter.prototype.removeAllEventListener = function (type) {
+    this._listeners[type] = [];
+  };
+
+  return EventEmitter;
+
+  /**
+   * The type of data received by a listener attached by using
+   * {{#crossLink &quot;EventEmitter/addEventListener:method&quot;}}{{/crossLink}}.
+   *
+   * @class StrongforceModelEvent
+   */
+
+  /**
+   * The model dispatching the event.
+   *
+   * @property target
+   * @type {Model}
+   */
+
+  /**
+   * The type of the event.
+   *
+   * @property type
+   * @type {String}
+   */
+
+  /**
+   * The moment at which the event has been dispatched.
+   *
+   * @property timestamp
+   * @type {Number}
+   */
+
+}.call(this));
+
+    </pre>
+</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

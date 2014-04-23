@@ -1,0 +1,816 @@
+{
+    "project": {
+        "name": "strongforce",
+        "description": "Strongforce is a light-weight framework to build game engines. It provides a backbone for a powerful game loop and helper classes for efficiently implement the game actors.",
+        "version": "0.1.0",
+        "url": "https://github.com/lodr/strongforce"
+    },
+    "files": {
+        "src/EventEmitter.js": {
+            "name": "src/EventEmitter.js",
+            "modules": {},
+            "classes": {
+                "EventEmitter": 1,
+                "StrongforceModelEvent": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/Loop.js": {
+            "name": "src/Loop.js",
+            "modules": {},
+            "classes": {
+                "LoopOptions": 1,
+                "Loop": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/Model.js": {
+            "name": "src/Model.js",
+            "modules": {},
+            "classes": {
+                "Model": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/Render.js": {
+            "name": "src/Render.js",
+            "modules": {},
+            "classes": {
+                "Render": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/Simulator.js": {
+            "name": "src/Simulator.js",
+            "modules": {},
+            "classes": {
+                "Simulator": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/_intro.js": {
+            "name": "src/_intro.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/_outro.js": {
+            "name": "src/_outro.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/strongforce.js": {
+            "name": "src/strongforce.js",
+            "modules": {
+                "strongforce": 1
+            },
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        }
+    },
+    "modules": {
+        "strongforce": {
+            "name": "strongforce",
+            "submodules": {},
+            "classes": {
+                "EventEmitter": 1,
+                "StrongforceModelEvent": 1,
+                "LoopOptions": 1,
+                "Loop": 1,
+                "Model": 1,
+                "Render": 1,
+                "Simulator": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "src/Simulator.js",
+            "line": 7
+        }
+    },
+    "classes": {
+        "EventEmitter": {
+            "name": "EventEmitter",
+            "shortname": "EventEmitter",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [
+                "Model"
+            ],
+            "module": "strongforce",
+            "file": "src/EventEmitter.js",
+            "line": 5,
+            "description": "Provide methods for dispatching events and add or remove listeners to\nspecified types of events.",
+            "is_constructor": 1
+        },
+        "StrongforceModelEvent": {
+            "name": "StrongforceModelEvent",
+            "shortname": "StrongforceModelEvent",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "strongforce",
+            "file": "src/EventEmitter.js",
+            "line": 123,
+            "description": "The type of data received by a listener attached by using\n{{#crossLink \"EventEmitter/addEventListener:method\"}}{{/crossLink}}."
+        },
+        "LoopOptions": {
+            "name": "LoopOptions",
+            "shortname": "LoopOptions",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "strongforce",
+            "file": "src/Loop.js",
+            "line": 6,
+            "description": "Options to customize the loop."
+        },
+        "Loop": {
+            "name": "Loop",
+            "shortname": "Loop",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "strongforce",
+            "file": "src/Loop.js",
+            "line": 52,
+            "description": "The loop is the main piece of strongforce. It coordinates simulation and\nrendering stages on the model. A loop takes a root model to traverse in\neach stage.\n\nDespite it is able to simulate the model at a constant rate, the loop is\ndriven by `window.requestAnimationFrame()` to schedule next loop step so\nrendering is coined to this rate. Foreso, this is the **frame rate**\nas well.",
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "customOptions",
+                    "description": "Hash to customize the loop. The\n{{#crossLink \"LoopOptions/rootModel:property\"}}{{/crossLink}} key\nis mandatory.",
+                    "type": "LoopOptions"
+                }
+            ]
+        },
+        "Model": {
+            "name": "Model",
+            "shortname": "Model",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "strongforce",
+            "file": "src/Model.js",
+            "line": 32,
+            "description": "The model is the target of the strongforce {{#crossLink \"Loop\"}}\n{{/crossLink}}. It follows a composite pattern to allow aggregation and\nrepresents what is simulated and rendered through _facets_.\n\nA facet is a function or a functor (i.e **a function-like object**) which\nreveals a specific behaviour depending on the stage being executed by the\nstrongforce's loop.\n\nThe developer can extend this class, hook the proper facets and provide\n{{#crossLink \"Model/getSubmodels:method\"}}{{/crossLink}} method to return\nother submodels.\n\n    // [Inheritance]\n    function GameOfLifeBoard(width, height) {\n      // Your code...\n      this.width = width;\n      this.height = height;\n      this.cells = [];\n      for (var i = 0; i < width; i++) {\n        for (var j = 0; j < height; j++) {\n          this.cells.push(new Cell(i, j));\n        }\n      }\n      Model.apply(this, arguments); // it's very important to keep this\n                                    // call at the end of the model.\n    }\n    GameOfLifeBoard.prototype = Object.create(Model.prototype);\n    GameOfLifeBoard.prototype.constructor = GameOfLifeBoard;\n\n    // [Hook the facets]\n    GameOfLifeBoard.prototype.simulate = GameOfLifeBoardSimulator;\n    GameOfLifeBoard.prototype.render = GameOfLifeBoardRender;\n\n    // [Specify submodels]\n    GameOfLifeBoard.prototype.getSubmodels = function () {\n      return this.cells;\n    };",
+            "uses": [
+                "EventEmitter"
+            ],
+            "is_constructor": 1
+        },
+        "Render": {
+            "name": "Render",
+            "shortname": "Render",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "strongforce",
+            "file": "src/Render.js",
+            "line": 8,
+            "description": "The render is the facet of a model in charge of realize the model. Usually\nby drawing it.\n\nThis class provides a functor skeleton to ease the implementation of\ncomplex renders. The developer can extend this class and override\n{{#crossLink \"Render/render:method\"}}{{/crossLink}}\nor {{#crossLink \"Render/postRender:method\"}}{{/crossLink}} methods to\nprovide the behaviors for the pre and post calls of the render stage.\n\n    function GameOfLifeCell() {\n      Render.apply(this, arguments);\n      // Your code...\n    }\n    GameOfLifeCell.prototype = Object.create(Render.prototype);\n    GameOfLifeCell.prototype.constructor = GameOfLifeCell;",
+            "is_constructor": 1
+        },
+        "Simulator": {
+            "name": "Simulator",
+            "shortname": "Simulator",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "strongforce",
+            "file": "src/Simulator.js",
+            "line": 7,
+            "description": "The simulator is the facet of a model in charge of business logic.\n\nThis class provides a functor skeleton to ease the implementation of\ncomplex simulators. The developer can extend this class and override\n{{#crossLink \"Simulator/simulate:method\"}}{{/crossLink}}\nor {{#crossLink \"Simulator/postSimulate:method\"}}{{/crossLink}}\nmethods to provide the behaviors for the pre and post calls of the\nsimulation stage.\n\n    function GameOfLife() {\n      Simulator.apply(this, arguments);\n      // Your code...\n    }\n    GameOfLife.prototype = Object.create(Simulator.prototype);\n    GameOfLife.prototype.constructor = GameOfLife;",
+            "is_constructor": 1
+        }
+    },
+    "classitems": [
+        {
+            "file": "src/EventEmitter.js",
+            "line": 13,
+            "description": "Keeps the list of listeners by event type.",
+            "itemtype": "property",
+            "name": "_listeners",
+            "type": "{Object}",
+            "access": "private",
+            "tagname": "",
+            "final": 1,
+            "class": "EventEmitter"
+        },
+        {
+            "file": "src/EventEmitter.js",
+            "line": 24,
+            "description": "Emit an event from the instance.",
+            "itemtype": "method",
+            "name": "dispatchEvent",
+            "params": [
+                {
+                    "name": "type",
+                    "description": "The type of the event.",
+                    "type": "String"
+                },
+                {
+                    "name": "event",
+                    "description": "Hash of event's properties.",
+                    "type": "Object",
+                    "optional": true,
+                    "optdefault": "{}"
+                }
+            ],
+            "class": "EventEmitter"
+        },
+        {
+            "file": "src/EventEmitter.js",
+            "line": 39,
+            "description": "Synchronously run the listeners for an event type removing _only once_\nlisteners.",
+            "itemtype": "method",
+            "name": "_runListeners",
+            "params": [
+                {
+                    "name": "type",
+                    "description": "The type of the event for which the listeners\nwill be executed.",
+                    "type": "String"
+                },
+                {
+                    "name": "event",
+                    "description": "Hash of event's properties.",
+                    "type": "Object"
+                }
+            ],
+            "access": "private",
+            "tagname": "",
+            "class": "EventEmitter"
+        },
+        {
+            "file": "src/EventEmitter.js",
+            "line": 62,
+            "description": "Add a listener for an event type to be executed synchronously every time\nthe model emits an event of the provided type. You can optionally indicate\nthe listener should run only once.",
+            "itemtype": "method",
+            "name": "addEventListener",
+            "params": [
+                {
+                    "name": "type",
+                    "description": "The type of the event for which the listener\nwill be attached.",
+                    "type": "String"
+                },
+                {
+                    "name": "callback",
+                    "description": "The listener is a function that will receive a\n{{#crossLink \"StrongforceModelEvent\"}}{{/crossLink}} parameter.",
+                    "type": "Function"
+                },
+                {
+                    "name": "once",
+                    "description": "If set to `true`, the listener will be\nexecuted only once and automatically removed after the execution.",
+                    "type": "Boolean",
+                    "optional": true,
+                    "optdefault": "false"
+                }
+            ],
+            "class": "EventEmitter"
+        },
+        {
+            "file": "src/EventEmitter.js",
+            "line": 88,
+            "description": "Remove one listener for the specified event type.",
+            "itemtype": "method",
+            "name": "removeEventListener",
+            "params": [
+                {
+                    "name": "type",
+                    "description": "The type of the event for which the listener\nwill be removed.",
+                    "type": "String"
+                },
+                {
+                    "name": "callback",
+                    "description": "The listener to remove.",
+                    "type": "Function"
+                }
+            ],
+            "class": "EventEmitter"
+        },
+        {
+            "file": "src/EventEmitter.js",
+            "line": 110,
+            "description": "Remove all listeners for an event type.",
+            "itemtype": "method",
+            "name": "removeEventListener",
+            "params": [
+                {
+                    "name": "type",
+                    "description": "The type of the event for which the listener\nwill be removed.",
+                    "type": "String"
+                }
+            ],
+            "class": "EventEmitter"
+        },
+        {
+            "file": "src/EventEmitter.js",
+            "line": 130,
+            "description": "The model dispatching the event.",
+            "itemtype": "property",
+            "name": "target",
+            "type": "{Model}",
+            "class": "StrongforceModelEvent"
+        },
+        {
+            "file": "src/EventEmitter.js",
+            "line": 137,
+            "description": "The type of the event.",
+            "itemtype": "property",
+            "name": "type",
+            "type": "{String}",
+            "class": "StrongforceModelEvent"
+        },
+        {
+            "file": "src/EventEmitter.js",
+            "line": 144,
+            "description": "The moment at which the event has been dispatched.",
+            "itemtype": "property",
+            "name": "timestamp",
+            "type": "{Number}",
+            "class": "StrongforceModelEvent"
+        },
+        {
+            "file": "src/Loop.js",
+            "line": 13,
+            "description": "The target model of the loop.",
+            "itemtype": "property",
+            "name": "rootModel",
+            "type": "{Model}",
+            "default": "undefined",
+            "class": "LoopOptions"
+        },
+        {
+            "file": "src/Loop.js",
+            "line": 22,
+            "description": "Max time in milliseconds to be simulated on each frame to avoid making\nthe simulation stage to take more time than that being simulated\n\nThe parameter is important to avoid _spiral of death_, an effect produced\ndue to the accumulation of a _time debt_ from frame to frame what leads\nto longer and longer freezes of the loop.",
+            "itemtype": "property",
+            "name": "maxSimulationTime",
+            "type": "{Number}",
+            "default": "300 milliseconds",
+            "class": "LoopOptions"
+        },
+        {
+            "file": "src/Loop.js",
+            "line": 36,
+            "description": "Time in milliseconds to be simulated in each tick. As a decoupled loop,\nticks per frame can vary from frame to frame.\n\nIf set to 0, the simulation is coupled to the frame rate.",
+            "itemtype": "property",
+            "name": "simulationDelta",
+            "type": "{Number}",
+            "default": "10 milliseconds",
+            "class": "LoopOptions"
+        },
+        {
+            "file": "src/Loop.js",
+            "line": 80,
+            "description": "The model target of loop.",
+            "itemtype": "property",
+            "name": "rootModel",
+            "type": "{Model}",
+            "readonly": "",
+            "class": "Loop"
+        },
+        {
+            "file": "src/Loop.js",
+            "line": 89,
+            "description": "Start the loop from the beginning, setting the current simulation time to\n0.",
+            "itemtype": "method",
+            "name": "start",
+            "class": "Loop"
+        },
+        {
+            "file": "src/Loop.js",
+            "line": 102,
+            "description": "Pause and force the current simulation time to 0 or other moment if\nindicated.",
+            "itemtype": "method",
+            "name": "reset",
+            "params": [
+                {
+                    "name": "newOffset",
+                    "description": "Time in milliseconds for the current\nsimulation time.",
+                    "type": "Number",
+                    "optional": true,
+                    "optdefault": "0"
+                }
+            ],
+            "class": "Loop"
+        },
+        {
+            "file": "src/Loop.js",
+            "line": 117,
+            "description": "Freezes the loop.",
+            "itemtype": "method",
+            "name": "pause",
+            "class": "Loop"
+        },
+        {
+            "file": "src/Loop.js",
+            "line": 127,
+            "description": "Continue with the loop.",
+            "itemtype": "method",
+            "name": "resume",
+            "class": "Loop"
+        },
+        {
+            "file": "src/Loop.js",
+            "line": 139,
+            "description": "Performs one, **and only one** loop step.",
+            "itemtype": "method",
+            "name": "step",
+            "params": [
+                {
+                    "name": "timeToSimulate",
+                    "description": "Time to be simulated in this step.\nIt defaults in\n{{#crossLink \"LoopOptions/simulationDelta:property\"}}{{/crossLink}}.",
+                    "type": "Number",
+                    "optional": true
+                }
+            ],
+            "class": "Loop"
+        },
+        {
+            "file": "src/Loop.js",
+            "line": 154,
+            "description": "The loop step is based on the article **Fix your timestep!**\n(http://gafferongames.com/game-physics/fix-your-timestep/) by\n_Glenn Fiedler_.\n\nThe loop step is the core of strongforce. It is in charge of orchestrate\nthe simulation and rendering stages. From frame to frame, the time frame\nis recorded and simulated in chunks of constant rate given by the\n{{#crossLink \"LoopOptions/simulationDelta:property\"}}{{/crossLink}}\noption.\n\nIn strongforce, a {{#crossLink \"Model\"}}{{/crossLink}} instance has\n_facets_. A facet is a object in charge of provide a specific\nfunctionality for the model. This object can be a function or a\nfunction-like object implementing `Function.prototype.apply()` signature.\n\nDuring simulation and rendering stages, the\n{{#crossLink \"Loop/rootModel:property\"}}{{/crossLink}} is visited in a\nrecursive way by\ncalling {{#crossLink \"Model/simulate:method\"}}{{/crossLink}} or\n{{#crossLink \"Model/render:method\"}}{{/crossLink}} methods on each model\nin pre-order, i.e. first the model itself, then its submodels.\n\nActually, each facet is called twice, one before visiting the children\nand another one after visiting them all. These calls are named pre-call\nand post-call and are distinguished by passing a `isPostCall` flag to\nthe facet.",
+            "itemtype": "method",
+            "name": "loopStep",
+            "params": [
+                {
+                    "name": "requestAnimationTime",
+                    "description": "[Not used].",
+                    "type": "DOMHighResTimeStamp"
+                },
+                {
+                    "name": "forcedTimeToSimulate",
+                    "description": "Milliseconds to simulate.",
+                    "type": "Number"
+                }
+            ],
+            "access": "private",
+            "tagname": "",
+            "class": "Loop"
+        },
+        {
+            "file": "src/Loop.js",
+            "line": 268,
+            "description": "Average frame time.",
+            "itemtype": "property",
+            "name": "frameTime",
+            "readonly": "",
+            "class": "Loop"
+        },
+        {
+            "file": "src/Model.js",
+            "line": 78,
+            "description": "A unique integer number to identify the model instance.",
+            "itemtype": "property",
+            "name": "id",
+            "final": 1,
+            "type": "{Number}",
+            "class": "Model"
+        },
+        {
+            "file": "src/Model.js",
+            "line": 97,
+            "description": "Passes through the model in pre-order calling a specified method. The\ncurrent model is visited twice. The first time the method is called, it\nis said to be the **pre-call**. The second call only happens after visiting\nall the children models and it is said to be the **post-call**.",
+            "itemtype": "method",
+            "name": "traverse",
+            "params": [
+                {
+                    "name": "methodName",
+                    "description": "The name of the method to call through the\nmodel.",
+                    "type": "String"
+                },
+                {
+                    "name": "submodelsGetterName",
+                    "description": "The name of the method to call in order\nto get the submodels.",
+                    "type": "String"
+                },
+                {
+                    "name": "methodArgs",
+                    "description": "List of parameters to pass to the method after\nthe `isPostCall` flag.",
+                    "type": "Array"
+                }
+            ],
+            "class": "Model"
+        },
+        {
+            "file": "src/Model.js",
+            "line": 152,
+            "description": "Facet to perform the simulation step of the model. Instead of simply\ncalled, the facet is revealed by calling `apply()` over the model so it can\nbe implemented either by a simple JavaScript function or a complex functor.\n\nIf set to a class extending the {{#crossLink \"Simulator\"}}{{/crossLink}}\nclass, when a new model is created, a new instance of the simulator class\nis assigned to the instance's property.",
+            "itemtype": "method",
+            "name": "simulate",
+            "params": [
+                {
+                    "name": "isPostCall",
+                    "description": "Flag indicating if it is the post-call or not.",
+                    "type": "Boolean"
+                },
+                {
+                    "name": "t",
+                    "description": "Time in milliseconds passed since the start of the\nsimulation.",
+                    "type": "Number"
+                },
+                {
+                    "name": "dt",
+                    "description": "Amount of time in milliseconds to simulate.",
+                    "type": "Number"
+                },
+                {
+                    "name": "update",
+                    "description": "A callback to schedule a function to be run once\nthe simulation stage has ended.",
+                    "type": "Function"
+                }
+            ],
+            "class": "Model"
+        },
+        {
+            "file": "src/Model.js",
+            "line": 171,
+            "description": "Return the (dynamic) list of submodels for the simulation stage. If it is\nnot overriden, it delegates in the\n{{#crossLink \"Model/getSubmodels:method\"}}{{/crossLink}} method.",
+            "itemtype": "method",
+            "name": "getSimulateSubmodels",
+            "return": {
+                "description": "An object implementing `Array.prototype.forEach()`\nsignature.",
+                "type": "Iterable"
+            },
+            "class": "Model"
+        },
+        {
+            "file": "src/Model.js",
+            "line": 184,
+            "description": "Facet to perform the render step of the model. Instead of simply\ncalled, the facet is revealed by calling `apply()` over the model so it can\nbe implemented either by a simple JavaScript function or a complex functor.\n\nIf set to a class extending the {{#crossLink \"Render\"}}{{/crossLink}}\nclass, when a new model is created, a new instance of the simulator class\nis assigned to the instance's property.",
+            "itemtype": "method",
+            "name": "render",
+            "params": [
+                {
+                    "name": "isPostCall",
+                    "description": "Flag indicating if it is the post-call or not.",
+                    "type": "Boolean"
+                },
+                {
+                    "name": "interpolationValue",
+                    "description": "A measure of how much time remains to\nsimulate in the interval `[0, 1)`. The value can be used as an\ninterpolation value for rendering smooth animations.",
+                    "type": "Number"
+                }
+            ],
+            "class": "Model"
+        },
+        {
+            "file": "src/Model.js",
+            "line": 201,
+            "description": "Return the (dynamic) list of submodels for the render stage. If it is\nnot overriden, it delegates in the\n{{#crossLink \"Model/getSubmodels:method\"}}{{/crossLink}} method.",
+            "itemtype": "method",
+            "name": "getRenderSubmodels",
+            "return": {
+                "description": "An object implementing `Array.prototype.forEach()`\nsignature.",
+                "type": "Iterable"
+            },
+            "class": "Model"
+        },
+        {
+            "file": "src/Model.js",
+            "line": 214,
+            "description": "Return the (dynamic) list of submodels composing the current model.",
+            "itemtype": "method",
+            "name": "getSubmodels",
+            "return": {
+                "description": "An object implementing `Array.prototype.forEach()`\nsignature.",
+                "type": "Iterable"
+            },
+            "class": "Model"
+        },
+        {
+            "file": "src/Render.js",
+            "line": 30,
+            "description": "Delegate on {{#crossLink \"Render/render:method\"}}{{/crossLink}}\nor {{#crossLink \"Render/postRender:method\"}}{{/crossLink}}\ndepending on the first component of `args` parameter which determine\nif this invocation is the pre-call or the post-call.\nThe method passes all the arguments to the delegated methods except\n`isPostCall` flag which is replaced by the model being simulated.\n\nThe function follows the signature of `Function.prototype.apply()`.",
+            "itemtype": "method",
+            "name": "apply",
+            "access": "private",
+            "tagname": "",
+            "params": [
+                {
+                    "name": "model",
+                    "description": "Model being simulated.",
+                    "type": "Model"
+                },
+                {
+                    "name": "args",
+                    "description": "Arguments for the functor. For renders,\nthese arguments are `isPostCall` flag and the simulation interpolation\nvalue.",
+                    "type": "Array",
+                    "optional": true,
+                    "optdefault": "[]"
+                }
+            ],
+            "class": "Render"
+        },
+        {
+            "file": "src/Render.js",
+            "line": 53,
+            "description": "Performs the pre-call for the model's rendering.",
+            "itemtype": "method",
+            "name": "render",
+            "params": [
+                {
+                    "name": "model",
+                    "description": "Model being simulated.",
+                    "type": "Model"
+                },
+                {
+                    "name": "interpolationValue",
+                    "description": "A measure of how much time remains to\nsimulate in the interval `[0, 1)`. The value can be used as an\ninterpolation value for rendering smooth animations.",
+                    "type": "Number"
+                }
+            ],
+            "class": "Render"
+        },
+        {
+            "file": "src/Render.js",
+            "line": 64,
+            "description": "Performs the post-call for the model's rendering.",
+            "itemtype": "method",
+            "name": "postRender",
+            "params": [
+                {
+                    "name": "model",
+                    "description": "Model being simulated.",
+                    "type": "Model"
+                },
+                {
+                    "name": "interpolationValue",
+                    "description": "A measure of how much time remains to\nsimulate in the interval `[0, 1)`. The value can be used as an\ninterpolation value for rendering smooth animations.",
+                    "type": "Number"
+                }
+            ],
+            "class": "Render"
+        },
+        {
+            "file": "src/Render.js",
+            "line": 75,
+            "description": "Helper method to trigger the render pre-call of a model.",
+            "itemtype": "method",
+            "name": "delegateToPostRender",
+            "params": [
+                {
+                    "name": "model",
+                    "description": "Model in which delegate.",
+                    "type": "Model"
+                }
+            ],
+            "class": "Render"
+        },
+        {
+            "file": "src/Render.js",
+            "line": 86,
+            "description": "Helper method to trigger the render post-call of a model.",
+            "itemtype": "method",
+            "name": "delegateToRender",
+            "params": [
+                {
+                    "name": "model",
+                    "description": "Model in which delegate.",
+                    "type": "Model"
+                }
+            ],
+            "class": "Render"
+        },
+        {
+            "file": "src/Simulator.js",
+            "line": 29,
+            "description": "Delegate on {{#crossLink \"Simulator/simulate:method\"}}{{/crossLink}}\nor {{#crossLink \"Simulator/postSimulate:method\"}}{{/crossLink}}\ndepending on the first component of `args` parameter which determine\nif this invocation is the pre-call or the post-call.\nThe method passes all the arguments to the delegated methods except\n`isPostCall` flag which is replaced by the model being simulated.\n\nThe function follows the signature of `Function.prototype.apply()`.",
+            "itemtype": "method",
+            "name": "apply",
+            "access": "private",
+            "tagname": "",
+            "params": [
+                {
+                    "name": "model",
+                    "description": "Model being simulated.",
+                    "type": "Model"
+                },
+                {
+                    "name": "args",
+                    "description": "Arguments for the functor. For simulators,\nthese arguments are `isPostCall` flag, time since the start of the\nsimulation, time to be simulated and the `update()` function to schedule\nmodel updates.",
+                    "type": "Array",
+                    "optional": true,
+                    "optdefault": "[]"
+                }
+            ],
+            "class": "Simulator"
+        },
+        {
+            "file": "src/Simulator.js",
+            "line": 54,
+            "description": "Performs the pre-call for the model's simulation. You can use the last\nparameter, the `update()` callback, to delay model updates after the\ncompletion of simulation stage (i.e, **after pre and post calls**):\n\n    GameOfLife.prototype.simulate = function (model, t, dt, update) {\n      // Read the model...\n      var aliveNeightbours = this.getAliveNeightbours(model);\n      update(function () {\n        // Update the model...\n        if (model.isAlive && aliveNeightbours < 3) {\n          model.isAlive = false;\n        }\n      });\n    };",
+            "itemtype": "method",
+            "name": "simulate",
+            "params": [
+                {
+                    "name": "model",
+                    "description": "Model being simulated.",
+                    "type": "Model"
+                },
+                {
+                    "name": "t",
+                    "description": "Time in milliseconds passed since the start of the\nsimulation.",
+                    "type": "Number"
+                },
+                {
+                    "name": "dt",
+                    "description": "Amount of time in milliseconds to simulate.",
+                    "type": "Number"
+                },
+                {
+                    "name": "update",
+                    "description": "A callback to schedule a function to be run once\nthe simulation stage has ended.",
+                    "type": "Function"
+                }
+            ],
+            "class": "Simulator"
+        },
+        {
+            "file": "src/Simulator.js",
+            "line": 80,
+            "description": "Performs the post-call for the model's simulation. You can use the last\nparameter, the `update()` callback, to delay model updates after the\ncompletion of simulation stage.\nSee {{#crossLink \"Simulator/simulate:method\"}}{{/crossLink}} for an usage\nexample.",
+            "itemtype": "method",
+            "name": "postSimulate",
+            "params": [
+                {
+                    "name": "model",
+                    "description": "Model being simulated.",
+                    "type": "Model"
+                },
+                {
+                    "name": "t",
+                    "description": "Time in milliseconds passed since the start of the\nsimulation.",
+                    "type": "Number"
+                },
+                {
+                    "name": "dt",
+                    "description": "Amount of time in milliseconds to simulate.",
+                    "type": "Number"
+                },
+                {
+                    "name": "update",
+                    "description": "A callback to schedule a function to be run once\nthe simulation stage has ended.",
+                    "type": "Function"
+                }
+            ],
+            "class": "Simulator"
+        },
+        {
+            "file": "src/_intro.js",
+            "line": 1,
+            "author": "Salvador de la Puente http://unoyunodiez.com/ @salvadelapuente",
+            "class": ""
+        },
+        {
+            "file": "src/_outro.js",
+            "line": 1,
+            "author": "Salvador de la Puente http://unoyunodiez.com/ @salvadelapuente",
+            "class": ""
+        },
+        {
+            "file": "src/strongforce.js",
+            "line": 1,
+            "author": "Salvador de la Puente http://unoyunodiez.com/ @salvadelapuente",
+            "class": ""
+        }
+    ],
+    "warnings": [
+        {
+            "message": "Missing item type",
+            "line": " src/_intro.js:1"
+        },
+        {
+            "message": "Missing item type",
+            "line": " src/_outro.js:1"
+        },
+        {
+            "message": "Missing item type",
+            "line": " src/strongforce.js:1"
+        }
+    ]
+}
