@@ -27,13 +27,15 @@
     "jquery": true,
 
     "globals": {
-      /* MOCHA */
+      /* MOCHA, CHAI & SINON */
       "describe": false,
       "it": false,
       "before": false,
       "beforeEach": false,
       "after": false,
       "afterEach": false,
+      "expect": false,
+      "sinon": false,
 
       /* LIBRARY */
       "strongforce": false

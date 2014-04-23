@@ -171,7 +171,7 @@
             "extension_for": [],
             "module": "strongforce",
             "file": "src/Model.js",
-            "line": 32,
+            "line": 10,
             "description": "The model is the target of the strongforce {{#crossLink \"Loop\"}}\n{{/crossLink}}. It follows a composite pattern to allow aggregation and\nrepresents what is simulated and rendered through _facets_.\n\nA facet is a function or a functor (i.e **a function-like object**) which\nreveals a specific behaviour depending on the stage being executed by the\nstrongforce's loop.\n\nThe developer can extend this class, hook the proper facets and provide\n{{#crossLink \"Model/getSubmodels:method\"}}{{/crossLink}} method to return\nother submodels.\n\n    // [Inheritance]\n    function GameOfLifeBoard(width, height) {\n      // Your code...\n      this.width = width;\n      this.height = height;\n      this.cells = [];\n      for (var i = 0; i < width; i++) {\n        for (var j = 0; j < height; j++) {\n          this.cells.push(new Cell(i, j));\n        }\n      }\n      Model.apply(this, arguments); // it's very important to keep this\n                                    // call at the end of the model.\n    }\n    GameOfLifeBoard.prototype = Object.create(Model.prototype);\n    GameOfLifeBoard.prototype.constructor = GameOfLifeBoard;\n\n    // [Hook the facets]\n    GameOfLifeBoard.prototype.simulate = GameOfLifeBoardSimulator;\n    GameOfLifeBoard.prototype.render = GameOfLifeBoardRender;\n\n    // [Specify submodels]\n    GameOfLifeBoard.prototype.getSubmodels = function () {\n      return this.cells;\n    };",
             "uses": [
                 "EventEmitter"
@@ -483,7 +483,7 @@
         },
         {
             "file": "src/Model.js",
-            "line": 78,
+            "line": 56,
             "description": "A unique integer number to identify the model instance.",
             "itemtype": "property",
             "name": "id",
@@ -493,7 +493,42 @@
         },
         {
             "file": "src/Model.js",
-            "line": 97,
+            "line": 75,
+            "description": "Detect if the facet hooks\n({{#crossLink \"Model/facets:property\"}}{{/crossLink}}) of a model\nare pointing to classes extending helper functors\n{{#crossLink \"Simulator\"}}{{/crossLink}} and\n{{#crossLink \"Render\"}}{{/crossLink}}.\nIf so, replace them by fresh instances from those classes.",
+            "itemtype": "method",
+            "name": "setupFacets",
+            "params": [
+                {
+                    "name": "model",
+                    "description": "The model to hook up.",
+                    "type": "Model"
+                },
+                {
+                    "name": "args",
+                    "description": "An array of arguments to be passed along the model\nitself to the functor constructor when instantiating it.",
+                    "type": "Array"
+                }
+            ],
+            "static": 1,
+            "access": "private",
+            "tagname": "",
+            "class": "Model"
+        },
+        {
+            "file": "src/Model.js",
+            "line": 109,
+            "description": "List of facets. Currently they are\n{{#crossLink \"Model/simulate:method\"}}{{/crossLink}} and\n{{#crossLink \"Model/render:method\"}}{{/crossLink}}.",
+            "itemtype": "property",
+            "name": "facets",
+            "type": "{Array}",
+            "static": 1,
+            "access": "private",
+            "tagname": "",
+            "class": "Model"
+        },
+        {
+            "file": "src/Model.js",
+            "line": 121,
             "description": "Passes through the model in pre-order calling a specified method. The\ncurrent model is visited twice. The first time the method is called, it\nis said to be the **pre-call**. The second call only happens after visiting\nall the children models and it is said to be the **post-call**.",
             "itemtype": "method",
             "name": "traverse",
@@ -518,7 +553,7 @@
         },
         {
             "file": "src/Model.js",
-            "line": 152,
+            "line": 176,
             "description": "Facet to perform the simulation step of the model. Instead of simply\ncalled, the facet is revealed by calling `apply()` over the model so it can\nbe implemented either by a simple JavaScript function or a complex functor.\n\nIf set to a class extending the {{#crossLink \"Simulator\"}}{{/crossLink}}\nclass, when a new model is created, a new instance of the simulator class\nis assigned to the instance's property.",
             "itemtype": "method",
             "name": "simulate",
@@ -548,7 +583,7 @@
         },
         {
             "file": "src/Model.js",
-            "line": 171,
+            "line": 195,
             "description": "Return the (dynamic) list of submodels for the simulation stage. If it is\nnot overriden, it delegates in the\n{{#crossLink \"Model/getSubmodels:method\"}}{{/crossLink}} method.",
             "itemtype": "method",
             "name": "getSimulateSubmodels",
@@ -560,7 +595,7 @@
         },
         {
             "file": "src/Model.js",
-            "line": 184,
+            "line": 208,
             "description": "Facet to perform the render step of the model. Instead of simply\ncalled, the facet is revealed by calling `apply()` over the model so it can\nbe implemented either by a simple JavaScript function or a complex functor.\n\nIf set to a class extending the {{#crossLink \"Render\"}}{{/crossLink}}\nclass, when a new model is created, a new instance of the simulator class\nis assigned to the instance's property.",
             "itemtype": "method",
             "name": "render",
@@ -580,7 +615,7 @@
         },
         {
             "file": "src/Model.js",
-            "line": 201,
+            "line": 225,
             "description": "Return the (dynamic) list of submodels for the render stage. If it is\nnot overriden, it delegates in the\n{{#crossLink \"Model/getSubmodels:method\"}}{{/crossLink}} method.",
             "itemtype": "method",
             "name": "getRenderSubmodels",
@@ -592,7 +627,7 @@
         },
         {
             "file": "src/Model.js",
-            "line": 214,
+            "line": 238,
             "description": "Return the (dynamic) list of submodels composing the current model.",
             "itemtype": "method",
             "name": "getSubmodels",

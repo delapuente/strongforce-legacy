@@ -7,28 +7,6 @@ strongforce.Model = (function (Render, Simulator, EventEmitter) {
       IS_POSTCALL = strongforce.IS_POSTCALL,
       NOOP = strongforce.NOOP;
 
-  function setupFacets(model, args) {
-    var isAFacetConstructor, baseClass, facetPrototype, newFacet, facets;
-
-    facets = {
-      'simulate': Simulator,
-      'render': Render
-    };
-
-    for (var facet in facets) {
-      if (facets.hasOwnProperty(facet)) {
-        baseClass = facets[facet];
-        facetPrototype = model[facet].prototype;
-        isAFacetConstructor = facetPrototype instanceof baseClass;
-        if (isAFacetConstructor) {
-          newFacet = Object.create(facetPrototype);
-          model[facet].apply(newFacet, [model].concat(args));
-          model[facet] = newFacet;
-        }
-      }
-    }
-  }
-
   /**
    * The model is the target of the strongforce {{#crossLink "Loop"}}
    * {{/crossLink}}. It follows a composite pattern to allow aggregation and
@@ -84,8 +62,8 @@ strongforce.Model = (function (Render, Simulator, EventEmitter) {
      */
     Object.defineProperty(this, 'id', { value: NEXT_ID++ });
 
-    // Facets must be the last thing to do
-    setupFacets(this, [].slice.call(arguments, 0));
+    // Setup facets must be the last thing to do!
+    Model.setupFacets(this, [].slice.call(arguments, 0));
   }
   var EventEmitterPrototype = EventEmitter.prototype;
   for (var property in EventEmitterPrototype) {
@@ -93,6 +71,52 @@ strongforce.Model = (function (Render, Simulator, EventEmitter) {
       Model.prototype[property] = EventEmitterPrototype[property];
     }
   }
+
+  /**
+   * Detect if the facet hooks
+   * ({{#crossLink "Model/facets:property"}}{{/crossLink}}) of a model
+   * are pointing to classes extending helper functors
+   * {{#crossLink "Simulator"}}{{/crossLink}} and
+   * {{#crossLink "Render"}}{{/crossLink}}.
+   * If so, replace them by fresh instances from those classes.
+   *
+   * @method setupFacets
+   * @param model {Model} The model to hook up.
+   * @param args {Array} An array of arguments to be passed along the model
+   * itself to the functor constructor when instantiating it.
+   * @static
+   * @private
+   */
+  Model.setupFacets = function (model, args) {
+    var isAFacetConstructor, facetPrototype, newFacet, facets;
+
+    facets = Model.facets;
+
+    for (var i = 0, facet; (facet = facets[i]); i++) {
+      facetPrototype = model[facet].prototype;
+      isAFacetConstructor = facetPrototype &&
+                            facetPrototype.apply !== undefined &&
+                            model[facet].apply !== undefined;
+
+      if (isAFacetConstructor) {
+        newFacet = Object.create(facetPrototype);
+        model[facet].apply(newFacet, [model].concat(args));
+        model[facet] = newFacet;
+      }
+    }
+  };
+
+  /**
+   * List of facets. Currently they are
+   * {{#crossLink "Model/simulate:method"}}{{/crossLink}} and
+   * {{#crossLink "Model/render:method"}}{{/crossLink}}.
+   *
+   * @property facets
+   * @type {Array}
+   * @static
+   * @private
+   */
+  Model.facets = ['simulate', 'render'];
 
   /**
    * Passes through the model in pre-order calling a specified method. The

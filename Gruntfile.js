@@ -22,6 +22,10 @@ module.exports = function(grunt) {
     '<%= dirs.demoScripts %>/**/*.js'
   ];
 
+  var specFiles = [
+    '<%= dirs.test %>/spec/**/*.js'
+  ];
+
   var banner = [
     '/**',
     ' * @license',
@@ -46,7 +50,8 @@ module.exports = function(grunt) {
       demoScripts: '<%= dirs.demo %>/scripts',
       demoLib: '<%= dirs.demo %>/lib',
       docs: 'docs',
-      test: 'test'
+      test: 'test',
+      spec: '<%= dirs.test %>/spec'
     },
 
     files: {
@@ -91,7 +96,10 @@ module.exports = function(grunt) {
     },
 
     jshint: {
-      files: srcFiles.concat(demoSrcFiles).concat('Gruntfile.js'),
+      files: srcFiles
+             .concat(demoSrcFiles)
+             .concat(specFiles)
+             .concat('Gruntfile.js'),
       options: {
         ignores: [
           'src/{_intro,_outro,strongforce}.js',
@@ -108,8 +116,14 @@ module.exports = function(grunt) {
     },
 
     watch: {
-      files: ['<%= jshint.files %>'],
-      tasks: ['dist']
+      jshint: {
+        files: ['<%= jshint.files %>'],
+        tasks: ['jshint']
+      },
+      test: {
+        files: ['<%= dirs.spec %>/**/*.js'],
+        tasks: ['connect:test', 'mocha']
+      }
     },
 
     // Shell commands
@@ -150,6 +164,7 @@ module.exports = function(grunt) {
           middleware: function(connect) {
             return [
               connect().use('/dist', connect.static('dist')),
+              connect().use('/src', connect.static('src')),
               connect.static('test')
             ];
           }
