@@ -59,8 +59,6 @@
 
             <ul id="api-modules" class="apis modules">
             
-                <li><a href="../modules/strongforce.html">strongforce</a></li>
-            
             </ul>
         </div>
     </div>
@@ -100,11 +98,12 @@
 
 <div class="file">
     <pre class="code prettyprint linenums">
-
-strongforce.Simulator = (function() {
+define([
+  &#x27;./consts&#x27;
+], function(consts) {
   &#x27;use strict&#x27;;
 
-  var NOOP = strongforce.NOOP;
+  var NOOP = consts.NOOP;
 
   /**
    * The simulator is the facet of a model in charge of business logic.
@@ -197,7 +196,7 @@ strongforce.Simulator = (function() {
   Simulator.prototype.postSimulate = NOOP;
 
   return Simulator;
-}.call(this));
+});
 
     </pre>
 </div>

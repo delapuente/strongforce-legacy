@@ -8,12 +8,7 @@ module.exports = function(grunt) {
   require('time-grunt')(grunt);
 
   var srcFiles = [
-    '<%= dirs.src %>/strongforce.js',
-    '<%= dirs.src %>/Loop.js',
-    '<%= dirs.src %>/EventEmitter.js',
-    '<%= dirs.src %>/Render.js',
-    '<%= dirs.src %>/Simulator.js',
-    '<%= dirs.src %>/Model.js'
+    '<%= dirs.src %>/**/*.js'
   ];
 
   var demoSrcFiles = [
@@ -174,7 +169,6 @@ module.exports = function(grunt) {
           port: 9001,
           middleware: function(connect) {
             return [
-              connect().use('/dist', connect.static('dist')),
               connect().use('/src', connect.static('src')),
               connect.static('test')
             ];

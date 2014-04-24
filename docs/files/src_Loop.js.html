@@ -59,8 +59,6 @@
 
             <ul id="api-modules" class="apis modules">
             
-                <li><a href="../modules/strongforce.html">strongforce</a></li>
-            
             </ul>
         </div>
     </div>
@@ -100,10 +98,9 @@
 
 <div class="file">
     <pre class="code prettyprint linenums">
-strongforce.Loop = (function () {
+define([
+], function () {
   &#x27;use strict&#x27;;
-
-  var root = this;
 
   /**
    * Options to customize the loop.
@@ -148,8 +145,7 @@ strongforce.Loop = (function () {
     simulationDelta: 10
   };
 
-  /* TODO: Add a default implementation for fallback. */
-  var requestAnimationFrame = root.requestAnimationFrame;
+  var requestAnimationFrame = window.requestAnimationFrame;
 
   /**
    * The loop is the main piece of strongforce. It coordinates simulation and
@@ -396,7 +392,7 @@ strongforce.Loop = (function () {
   }
 
   return Loop;
-}.call(this));
+});
 
     </pre>
 </div>

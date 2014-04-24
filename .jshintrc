@@ -36,6 +36,7 @@
       "afterEach": false,
       "expect": false,
       "sinon": false,
+      "newContext": false,
 
       /* LIBRARY */
       "strongforce": false,

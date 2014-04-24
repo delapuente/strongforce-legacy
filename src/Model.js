@@ -1,9 +1,7 @@
 define([
   './consts',
-  './Render',
-  './Simulator',
   './EventEmitter'
-], function (consts, Render, Simulator, EventEmitter) {
+], function (consts, EventEmitter) {
   'use strict';
 
   var NEXT_ID = 1,

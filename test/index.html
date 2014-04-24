@@ -12,19 +12,21 @@
     <script>mocha.setup('bdd')</script>
     <script src="testing_lib/chai/chai.js"></script>
     <script src="testing_lib/sinonjs/sinon.js"></script>
+    <script src="testing_lib/requirejs/require.js"></script>
+    <script src="lib/context.js"></script>
     <script>
-        var assert = chai.assert;
-        var expect = chai.expect;
-        var should = chai.should();
+      var assert = chai.assert;
+      var expect = chai.expect;
+      var should = chai.should();
+
+      requirejs([
+        'spec/EventEmitter',
+        'spec/Model'
+      ], function () {
+        window.onload = function () {
+          mocha.run();
+        };
+      });
     </script>
-
-    <!-- include source files here... -->
-    <script src="dist/strongforce.js"></script>
-
-    <!-- include spec files here... -->
-    <script src="spec/EventEmitter.js"></script>
-    <script src="spec/Model.js"></script>
-
-    <script>mocha.run()</script>
 </body>
 </html>

@@ -59,8 +59,6 @@
 
             <ul id="api-modules" class="apis modules">
             
-                <li><a href="../modules/strongforce.html">strongforce</a></li>
-            
             </ul>
         </div>
     </div>
@@ -100,14 +98,16 @@
 
 <div class="file">
     <pre class="code prettyprint linenums">
-
-strongforce.Model = (function (Render, Simulator, EventEmitter) {
+define([
+  &#x27;./consts&#x27;,
+  &#x27;./EventEmitter&#x27;
+], function (consts, EventEmitter) {
   &#x27;use strict&#x27;;
 
   var NEXT_ID = 1,
-      IS_PRECALL = strongforce.IS_PRECALL,
-      IS_POSTCALL = strongforce.IS_POSTCALL,
-      NOOP = strongforce.NOOP;
+      IS_PRECALL = consts.IS_PRECALL,
+      IS_POSTCALL = consts.IS_POSTCALL,
+      NOOP = consts.NOOP;
 
   /**
    * The model is the target of the strongforce {{#crossLink &quot;Loop&quot;}}
@@ -349,12 +349,7 @@ strongforce.Model = (function (Render, Simulator, EventEmitter) {
   };
 
   return Model;
-}.call(
-  this,
-  strongforce.Render,
-  strongforce.Simulator,
-  strongforce.EventEmitter
-));
+});
 
     </pre>
 </div>

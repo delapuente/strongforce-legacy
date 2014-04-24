@@ -9,14 +9,7 @@ YUI.add("yuidoc-meta", function(Y) {
         "Simulator",
         "StrongforceModelEvent"
     ],
-    "modules": [
-        "strongforce"
-    ],
-    "allModules": [
-        {
-            "displayName": "strongforce",
-            "name": "strongforce"
-        }
-    ]
+    "modules": [],
+    "allModules": []
 } };
 });
