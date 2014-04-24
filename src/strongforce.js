@@ -1,13 +1,19 @@
-/**
- * @author Salvador de la Puente http://unoyunodiez.com/ @salvadelapuente
- */
+define([
+  './consts',
+  './Loop',
+  './Render',
+  './Simulator',
+  './Model',
+  './EventEmitter'
+], function (consts, Loop, Render, Simulator, Model, EventEmitter) {
+  'use strict';
 
-/**
- * @module strongforce
- */
-var strongforce = strongforce || {};
-
-strongforce.NOOP = function () {};
-
-strongforce.IS_PRECALL = false;
-strongforce.IS_POSTCALL = true;
+  return {
+    consts: consts,
+    Loop: Loop,
+    Render: Render,
+    Simulator: Simulator,
+    Model: Model,
+    EventEmitter: EventEmitter
+  };
+});

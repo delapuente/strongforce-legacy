@@ -8,18 +8,16 @@ module.exports = function(grunt) {
   require('time-grunt')(grunt);
 
   var srcFiles = [
-    '<%= dirs.src %>/_intro.js',
     '<%= dirs.src %>/strongforce.js',
     '<%= dirs.src %>/Loop.js',
     '<%= dirs.src %>/EventEmitter.js',
     '<%= dirs.src %>/Render.js',
     '<%= dirs.src %>/Simulator.js',
-    '<%= dirs.src %>/Model.js',
-    '<%= dirs.src %>/_outro.js'
+    '<%= dirs.src %>/Model.js'
   ];
 
   var demoSrcFiles = [
-    '<%= dirs.demoScripts %>/**/*.js'
+    '<%= dirs.demo %>/scripts/**/*.js'
   ];
 
   var specFiles = [
@@ -29,13 +27,13 @@ module.exports = function(grunt) {
   var banner = [
     '/**',
     ' * @license',
-    ' * <%= pkg.name %> - v<%= pkg.version %>',
+    ' * <%= libname %> - v<%= pkg.version %>',
     ' * Copyright (c) 2014, Salvador de la Puente',
     ' * <%= pkg.homepage %>',
     ' *',
     ' * Compiled: <%= grunt.template.today("yyyy-mm-dd") %>',
     ' *',
-    ' * <%= pkg.name %> is licensed under the <%= pkg.license %> License.',
+    ' * <%= libname %> is licensed under the <%= pkg.license %> License.',
     ' * <%= pkg.licenseUrl %>',
     ' */',
     ''
@@ -43,43 +41,57 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
 
+    libname: '<%= pkg.name %>',
+
     dirs: {
       src: 'src',
-      build: 'dist',
+      bin: 'dist',
+      build: 'build',
       demo: 'demo',
-      demoScripts: '<%= dirs.demo %>/scripts',
-      demoLib: '<%= dirs.demo %>/lib',
       docs: 'docs',
       test: 'test',
-      spec: '<%= dirs.test %>/spec'
+      spec: '<%= dirs.test %>/spec',
+      tmp: '.tmp'
     },
 
     files: {
-      build: '<%= dirs.build %>/<%= pkg.name %>.js',
-      buildDev: '<%= dirs.build %>/<%= pkg.name %>.js',
-      buildMin: '<%= dirs.build %>/<%= pkg.name %>.min.js'
+      build: '<%= dirs.bin %>/<%= libname %>.js',
+      buildMin: '<%= dirs.bin %>/<%= libname %>.min.js',
+      preBuild: '<%= dirs.tmp %>/<%= libname %>.js',
+      intro: '<%= dirs.build %>/_intro.js',
+      outro: '<%= dirs.build %>/_outro.js'
     },
 
     pkg: grunt.file.readJSON('package.json'),
 
     concat: {
       options: {
-        separator: '\n'
+        separator: '\n\n'
       },
       dist: {
-        src: srcFiles,
-        dest: '<%= files.build %>'
+        src: [
+          '<%= files.intro %>',
+          '<%= files.preBuild %>',
+          '<%= files.outro %>'
+        ],
+        dest: '<%= files.build %>',
+        options: { process: true }
       }
     },
 
-    /* jshint -W106 */
-    concat_sourcemap: {
-      dev: {
-        files: {
-          '<%= files.buildDev %>': srcFiles
-        },
+    copy: {
+      dist: {
+        expand: true,
+        cwd: '<%= dirs.tmp %>',
+        src: '*.map',
+        dest: '<%= dirs.bin %>/',
         options: {
-          sourceRoot: '../'
+          process: function (content) {
+            var target = '"mappings": "';
+            var offset = 46;
+            var padding = new Array(offset + 1).join(';');
+            return content.replace(target, target + padding);
+          }
         }
       }
     },
@@ -102,8 +114,7 @@ module.exports = function(grunt) {
              .concat('Gruntfile.js'),
       options: {
         ignores: [
-          'src/{_intro,_outro,strongforce}.js',
-          '<%= dirs.demoLib %>/**/*'
+          'src/{_intro,_outro,strongforce}.js'
         ],
         globals: {
           console: true,
@@ -136,7 +147,7 @@ module.exports = function(grunt) {
 
     yuidoc: {
       compile: {
-        name: '<%= pkg.name %>',
+        name: '<%= libname %>',
         description: '<%= pkg.description %>',
         version: '<%= pkg.version %>',
         url: '<%= pkg.homepage %>',
@@ -172,6 +183,19 @@ module.exports = function(grunt) {
       }
     },
 
+    requirejs: {
+      dist: {
+        options: {
+          optimize: 'none',
+          baseUrl: 'src',
+          name: '<%= libname %>',
+          out: '<%= files.preBuild %>',
+          useStrict: true,
+          generateSourceMaps: true
+        }
+      }
+    },
+
     // Mocha testing framework configuration options
     mocha: {
       all: {
@@ -190,9 +214,9 @@ module.exports = function(grunt) {
   grunt.registerTask('hookmeup', ['shell:hooks']);
   grunt.registerTask('docs', ['yuidoc']);
   grunt.registerTask('test',
-    ['jshint', 'concat_sourcemap', 'connect:test', 'mocha']);
+    ['jshint', 'connect:test', 'mocha']);
   grunt.registerTask('dist', ['jshint', 'concat', 'uglify', 'docs']);
   grunt.registerTask('default',
-   ['jshint', 'concat_sourcemap', 'connect:test', 'mocha']);
+   ['jshint', 'connect:test', 'mocha']);
 
 };

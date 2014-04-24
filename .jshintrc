@@ -38,6 +38,9 @@
       "sinon": false,
 
       /* LIBRARY */
-      "strongforce": false
+      "strongforce": false,
+
+      /* REQUIREJS */
+      "define": false
     }
 }

@@ -1,11 +1,15 @@
-
-strongforce.Model = (function (Render, Simulator, EventEmitter) {
+define([
+  './consts',
+  './Render',
+  './Simulator',
+  './EventEmitter'
+], function (consts, Render, Simulator, EventEmitter) {
   'use strict';
 
   var NEXT_ID = 1,
-      IS_PRECALL = strongforce.IS_PRECALL,
-      IS_POSTCALL = strongforce.IS_POSTCALL,
-      NOOP = strongforce.NOOP;
+      IS_PRECALL = consts.IS_PRECALL,
+      IS_POSTCALL = consts.IS_POSTCALL,
+      NOOP = consts.NOOP;
 
   /**
    * The model is the target of the strongforce {{#crossLink "Loop"}}
@@ -247,9 +251,4 @@ strongforce.Model = (function (Render, Simulator, EventEmitter) {
   };
 
   return Model;
-}.call(
-  this,
-  strongforce.Render,
-  strongforce.Simulator,
-  strongforce.EventEmitter
-));
+});

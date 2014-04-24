@@ -1,7 +1,6 @@
-strongforce.Loop = (function () {
+define([
+], function () {
   'use strict';
-
-  var root = this;
 
   /**
    * Options to customize the loop.
@@ -46,8 +45,7 @@ strongforce.Loop = (function () {
     simulationDelta: 10
   };
 
-  /* TODO: Add a default implementation for fallback. */
-  var requestAnimationFrame = root.requestAnimationFrame;
+  var requestAnimationFrame = window.requestAnimationFrame;
 
   /**
    * The loop is the main piece of strongforce. It coordinates simulation and
@@ -294,4 +292,4 @@ strongforce.Loop = (function () {
   }
 
   return Loop;
-}.call(this));
+});

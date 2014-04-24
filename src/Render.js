@@ -1,9 +1,11 @@
-strongforce.Render = (function() {
+define([
+  './consts'
+], function(consts) {
   'use strict';
 
-  var NOOP = strongforce.NOOP,
-      IS_PRECALL = strongforce.IS_PRECALL,
-      IS_POSTCALL = strongforce.IS_POSTCALL;
+  var NOOP = consts.NOOP,
+      IS_PRECALL = consts.IS_PRECALL,
+      IS_POSTCALL = consts.IS_POSTCALL;
 
   /**
    * The render is the facet of a model in charge of realize the model. Usually
@@ -96,4 +98,4 @@ strongforce.Render = (function() {
   };
 
   return Render;
-}.call(this));
+});

@@ -1,5 +1,5 @@
-
-strongforce.EventEmitter = (function () {
+define([
+], function () {
   'use strict';
 
   /**
@@ -148,4 +148,4 @@ strongforce.EventEmitter = (function () {
    * @type {Number}
    */
 
-}.call(this));
+});

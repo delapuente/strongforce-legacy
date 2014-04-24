@@ -3,6 +3,7 @@ testing_lib/
 node_modules/
 temp/
 tmp/
+.tmp/
 logs/
 log/
 results/

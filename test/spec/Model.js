@@ -74,8 +74,8 @@ describe('src/Model', function () {
           submodel = { traverse: sinon.spy() },
           methodArgs = [1, 2, 3],
           submodels = [submodel, submodel],
-          IS_PRECALL = strongforce.IS_PRECALL,
-          IS_POSTCALL = strongforce.IS_POSTCALL;
+          IS_PRECALL = false,
+          IS_POSTCALL = true; /* TODO: Get from the library. */
 
       model.test = sinon.spy();
       model.getTestSubmodels = sinon.stub().returns(submodels);

@@ -1,8 +1,9 @@
-
-strongforce.Simulator = (function() {
+define([
+  './consts'
+], function(consts) {
   'use strict';
 
-  var NOOP = strongforce.NOOP;
+  var NOOP = consts.NOOP;
 
   /**
    * The simulator is the facet of a model in charge of business logic.
@@ -95,4 +96,4 @@ strongforce.Simulator = (function() {
   Simulator.prototype.postSimulate = NOOP;
 
   return Simulator;
-}.call(this));
+});
