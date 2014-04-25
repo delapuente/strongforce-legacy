@@ -63,7 +63,7 @@ module.exports = function(grunt) {
       options: {
         separator: '\n\n'
       },
-      dist: {
+      pack: {
         src: [
           '<%= files.intro %>',
           '<%= files.preBuild %>',
@@ -74,89 +74,8 @@ module.exports = function(grunt) {
       }
     },
 
-    copy: {
-      dist: {
-        expand: true,
-        cwd: '<%= dirs.tmp %>',
-        src: '*.map',
-        dest: '<%= dirs.bin %>/',
-        options: {
-          process: function (content) {
-            var target = '"mappings": "';
-            var offset = 46;
-            var padding = new Array(offset + 1).join(';');
-            return content.replace(target, target + padding);
-          }
-        }
-      }
-    },
-
-    uglify: {
-      options: {
-        banner: banner
-      },
-      dist: {
-        files: {
-          '<%= files.buildMin %>': ['<%= concat.dist.dest %>']
-        }
-      }
-    },
-
-    jshint: {
-      files: srcFiles
-             .concat(demoSrcFiles)
-             .concat(specFiles)
-             .concat('Gruntfile.js'),
-      options: {
-        ignores: [
-          'src/{_intro,_outro,strongforce}.js'
-        ],
-        globals: {
-          console: true,
-          module: true,
-          document: true,
-          strongforce: false
-        },
-        jshintrc: '.jshintrc'
-      }
-    },
-
-    watch: {
-      jshint: {
-        files: ['<%= jshint.files %>'],
-        tasks: ['jshint']
-      },
-      test: {
-        files: ['<%= dirs.spec %>/**/*.js'],
-        tasks: ['connect:test', 'mocha']
-      }
-    },
-
-    // Shell commands
-    shell: {
-      hooks: {
-        command: 'cp git-hooks/pre-commit .git/hooks/ && ' +
-                 'chmod +x .git/hooks/pre-commit'
-      }
-    },
-
-    yuidoc: {
-      compile: {
-        name: '<%= libname %>',
-        description: '<%= pkg.description %>',
-        version: '<%= pkg.version %>',
-        url: '<%= pkg.homepage %>',
-        options: {
-          paths: '<%= dirs.src %>',
-          outdir: '<%= dirs.docs %>'
-        }
-      }
-    },
-
     connect: {
       options: {
-        port: 9000,
-        livereload: 35729,
         // Change this to '0.0.0.0' to access the server from outside
         hostname: '0.0.0.0',
         open: {
@@ -174,11 +93,68 @@ module.exports = function(grunt) {
             ];
           }
         }
+      },
+      debug: {
+        options: {
+          port: 9002,
+          livereload: 35729,
+          middleware: function(connect) {
+            return [
+              connect().use('/src', connect.static('src')),
+              connect.static('test')
+            ];
+          }
+        }
+      }
+    },
+
+    copy: {
+      pack: {
+        expand: true,
+        cwd: '<%= dirs.tmp %>',
+        src: '*.map',
+        dest: '<%= dirs.bin %>/',
+        options: {
+          process: function (content) {
+            var target = '"mappings": "';
+            var offset = 46;
+            var padding = new Array(offset + 1).join(';');
+            return content.replace(target, target + padding);
+          }
+        }
+      }
+    },
+
+    jshint: {
+      files: srcFiles
+             .concat(demoSrcFiles)
+             .concat(specFiles)
+             .concat('Gruntfile.js'),
+      options: {
+        globals: {
+          console: true,
+          module: true,
+          document: true
+        },
+        jshintrc: '.jshintrc'
+      }
+    },
+
+    // Mocha testing framework configuration options
+    mocha: {
+      all: {
+        options: {
+          run: false,
+          urls: [
+            'http://<%= connect.test.options.hostname %>:' +
+            '<%= connect.test.options.port %>/index.html'
+          ]
+        }
       }
     },
 
     requirejs: {
-      dist: {
+      pack: {
         options: {
           optimize: 'none',
           baseUrl: 'src',
@@ -190,27 +166,72 @@ module.exports = function(grunt) {
       }
     },
 
-    // Mocha testing framework configuration options
-    mocha: {
-      all: {
-        options: {
-          run: true,
-          urls: [
-            'http://<%= connect.test.options.hostname %>:' +
-            '<%= connect.test.options.port %>/index.html'
-          ]
+    // Shell commands
+    shell: {
+      hooks: {
+        command: 'cp git-hooks/pre-commit .git/hooks/ && ' +
+                 'chmod +x .git/hooks/pre-commit'
+      }
+    },
+
+    uglify: {
+      options: {
+        banner: banner
+      },
+      pack: {
+        files: {
+          '<%= files.buildMin %>': ['<%= files.build %>']
         }
       }
     },
 
+    watch: {
+      jshint: {
+        files: ['<%= jshint.files %>'],
+        tasks: ['jshint']
+      },
+      test: {
+        files: srcFiles.concat(specFiles),
+        tasks: ['connect:test', 'mocha']
+      },
+      debug: {
+        files: srcFiles.concat(specFiles),
+        tasks: [],
+        options: {
+          livereload: 35729
+        }
+      }
+    },
+
+    yuidoc: {
+      compile: {
+        name: '<%= libname %>',
+        description: '<%= pkg.description %>',
+        version: '<%= pkg.version %>',
+        url: '<%= pkg.homepage %>',
+        options: {
+          paths: '<%= dirs.src %>',
+          outdir: '<%= dirs.docs %>'
+        }
+      }
+    }
+
   });
 
-  grunt.registerTask('hookmeup', ['shell:hooks']);
+  grunt.registerTask('default', ['docs', 'lint', 'test', 'pack', 'min']);
+  grunt.registerTask('dist', ['docs', 'pack', 'min']);
   grunt.registerTask('docs', ['yuidoc']);
-  grunt.registerTask('test',
-    ['jshint', 'connect:test', 'mocha']);
-  grunt.registerTask('dist', ['jshint', 'concat', 'uglify', 'docs']);
-  grunt.registerTask('default',
-   ['jshint', 'connect:test', 'mocha']);
+  grunt.registerTask('lint', ['jshint']);
+  grunt.registerTask('test', ['connect:test', 'mocha']);
+  grunt.registerTask('tests', ['test']);
+  grunt.registerTask('pack', [
+    'requirejs:pack',
+    'concat:pack',
+    'copy:pack'
+  ]);
+  grunt.registerTask('min', ['uglify:pack']);
+  grunt.registerTask('dev', ['watch']);
+  grunt.registerTask('debug', ['connect:debug', 'watch:debug']);
 
+  grunt.registerTask('hookmeup', ['shell:hooks']);
 };

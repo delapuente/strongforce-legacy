@@ -1,8 +1,6 @@
 (function(global) {
   'use strict';
 
-  var contextPaths;
-
   /* Based on the code found in: https://coderwall.com/p/teiyew */
   global.newContext = function newContext(fakes) {
     fakes = fakes || {};
@@ -15,8 +13,7 @@
     });
 
     var contextualizedRequire = require.config({
-      paths: contextPaths,
-      context: 'context_' + Date.now(),
+      context: 'context_' + Date.now() + '_' + Math.random(),
       map: {
         "*": fakeMap
       }

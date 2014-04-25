@@ -45,6 +45,8 @@ function normalize(name) {
 
 define('consts',[
 ], function () {
+  'use strict';
+
   return {
     NOOP: function () {},
     IS_PRECALL: false,
@@ -704,10 +706,8 @@ define('EventEmitter',[
 
 define('Model',[
   './consts',
-  './Render',
-  './Simulator',
   './EventEmitter'
-], function (consts, Render, Simulator, EventEmitter) {
+], function (consts, EventEmitter) {
   'use strict';
 
   var NEXT_ID = 1,
