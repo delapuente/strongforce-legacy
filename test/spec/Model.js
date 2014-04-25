@@ -1,22 +1,20 @@
 define([], function() {
   'use strict';
 
-  function EventEmitter() { }
-  EventEmitter.prototype.fake = {};
-
-  var context = newContext({
-    'src/EventEmitter': EventEmitter
-  });
+  var context = newContext();
 
   describe('src/Model', function () {
 
-    var Model;
+    var Model, EventEmitter;
 
     var SimulateFunctor, RenderFunctor;
 
     beforeEach(function (done) {
-      context(['src/Model'], function (ModelModule) {
+      context([
+        'src/Model', 'src/EventEmitter'
+      ], function (ModelModule, EventEmitterModule) {
         Model = ModelModule;
+        EventEmitter = EventEmitterModule;
         SimulateFunctor = sinon.spy();
         SimulateFunctor.prototype.apply = sinon.spy();
         RenderFunctor = sinon.spy();
