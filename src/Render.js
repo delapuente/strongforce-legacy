@@ -25,6 +25,10 @@ define([
    *     GameOfLifeCell.prototype.constructor = GameOfLifeCell;
    *
    * @class Render
+   * @param model {Model} The model for which this functor is being
+   * instantiated.
+   * @param [modelParameters]* {Any} The same parameters passed to the model
+   * constructor.
    * @constructor
    */
   function Render() { }
@@ -75,10 +79,15 @@ define([
   Render.prototype.postRender = NOOP;
 
   /**
-   * Helper method to trigger the render pre-call of a model.
+   * Helper method to trigger the render pre-call of a model. It is usually
+   * used from the {{#crossLink "Render/render:method"}}{{/crossLink}}
+   * method.
    *
-   * @method delegateToPostRender
+   * @method delegateToRender
    * @param model {Model} Model in which delegate.
+   * @param [args]* {Any} The parameters passed to the render pre-call of the
+   * model. It is convinient to simply bypass the same arguments received in the
+   * {{#crossLink "Render/render:method"}}{{/crossLink}} method.
    */
   Render.prototype.delegateToRender = function (model) {
     var args = [IS_PRECALL].concat(Array.prototype.slice.call(arguments, 1));
@@ -86,15 +95,20 @@ define([
   };
 
   /**
-   * Helper method to trigger the render post-call of a model.
+   * Helper method to trigger the render post-call of a model. It is usually
+   * used from the {{#crossLink "Render/postRender:method"}}{{/crossLink}}
+   * method.
    *
-   * @method delegateToRender
+   * @method delegateToPostRender
    * @param model {Model} Model in which delegate.
+   * @param [args]* {Any} The parameters passed to the render post-call of the
+   * model. It is convinient to simply bypass the same arguments received in the
+   * {{#crossLink "Render/postRender:method"}}{{/crossLink}} method.
    */
   Render.prototype.delegateToPostRender = function (model) {
     /* TODO: Consider make a factory for delegations */
     var args = [IS_POSTCALL].concat(Array.prototype.slice.call(arguments, 1));
-    model.postRender.apply(model, args);
+    model.render.apply(model, args);
   };
 
   return Render;

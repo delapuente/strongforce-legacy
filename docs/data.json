@@ -142,6 +142,20 @@
             "file": "src/Render.js",
             "line": 10,
             "description": "The render is the facet of a model in charge of realize the model. Usually\nby drawing it.\n\nThis class provides a functor skeleton to ease the implementation of\ncomplex renders. The developer can extend this class and override\n{{#crossLink \"Render/render:method\"}}{{/crossLink}}\nor {{#crossLink \"Render/postRender:method\"}}{{/crossLink}} methods to\nprovide the behaviors for the pre and post calls of the render stage.\n\n    function GameOfLifeCell() {\n      Render.apply(this, arguments);\n      // Your code...\n    }\n    GameOfLifeCell.prototype = Object.create(Render.prototype);\n    GameOfLifeCell.prototype.constructor = GameOfLifeCell;",
+            "params": [
+                {
+                    "name": "model",
+                    "description": "The model for which this functor is being\ninstantiated.",
+                    "type": "Model"
+                },
+                {
+                    "name": "modelParameters",
+                    "description": "The same parameters passed to the model\nconstructor.",
+                    "type": "Any",
+                    "optional": true,
+                    "multiple": true
+                }
+            ],
             "is_constructor": 1
         },
         "Simulator": {
@@ -155,6 +169,20 @@
             "file": "src/Simulator.js",
             "line": 8,
             "description": "The simulator is the facet of a model in charge of business logic.\n\nThis class provides a functor skeleton to ease the implementation of\ncomplex simulators. The developer can extend this class and override\n{{#crossLink \"Simulator/simulate:method\"}}{{/crossLink}}\nor {{#crossLink \"Simulator/postSimulate:method\"}}{{/crossLink}}\nmethods to provide the behaviors for the pre and post calls of the\nsimulation stage.\n\n    function GameOfLife() {\n      Simulator.apply(this, arguments);\n      // Your code...\n    }\n    GameOfLife.prototype = Object.create(Simulator.prototype);\n    GameOfLife.prototype.constructor = GameOfLife;",
+            "params": [
+                {
+                    "name": "model",
+                    "description": "The model for which this functor is being\ninstantiated.",
+                    "type": "Model"
+                },
+                {
+                    "name": "modelParameters",
+                    "description": "The same parameters passed to the model\nconstructor.",
+                    "type": "Any",
+                    "optional": true,
+                    "multiple": true
+                }
+            ],
             "is_constructor": 1
         }
     },
@@ -590,7 +618,7 @@
         },
         {
             "file": "src/Render.js",
-            "line": 32,
+            "line": 36,
             "description": "Delegate on {{#crossLink \"Render/render:method\"}}{{/crossLink}}\nor {{#crossLink \"Render/postRender:method\"}}{{/crossLink}}\ndepending on the first component of `args` parameter which determine\nif this invocation is the pre-call or the post-call.\nThe method passes all the arguments to the delegated methods except\n`isPostCall` flag which is replaced by the model being simulated.\n\nThe function follows the signature of `Function.prototype.apply()`.",
             "itemtype": "method",
             "name": "apply",
@@ -614,7 +642,7 @@
         },
         {
             "file": "src/Render.js",
-            "line": 55,
+            "line": 59,
             "description": "Performs the pre-call for the model's rendering.",
             "itemtype": "method",
             "name": "render",
@@ -634,7 +662,7 @@
         },
         {
             "file": "src/Render.js",
-            "line": 66,
+            "line": 70,
             "description": "Performs the post-call for the model's rendering.",
             "itemtype": "method",
             "name": "postRender",
@@ -654,23 +682,8 @@
         },
         {
             "file": "src/Render.js",
-            "line": 77,
-            "description": "Helper method to trigger the render pre-call of a model.",
-            "itemtype": "method",
-            "name": "delegateToPostRender",
-            "params": [
-                {
-                    "name": "model",
-                    "description": "Model in which delegate.",
-                    "type": "Model"
-                }
-            ],
-            "class": "Render"
-        },
-        {
-            "file": "src/Render.js",
-            "line": 88,
-            "description": "Helper method to trigger the render post-call of a model.",
+            "line": 81,
+            "description": "Helper method to trigger the render pre-call of a model. It is usually\nused from the {{#crossLink \"Render/render:method\"}}{{/crossLink}}\nmethod.",
             "itemtype": "method",
             "name": "delegateToRender",
             "params": [
@@ -678,13 +691,42 @@
                     "name": "model",
                     "description": "Model in which delegate.",
                     "type": "Model"
+                },
+                {
+                    "name": "args",
+                    "description": "The parameters passed to the render pre-call of the\nmodel. It is convinient to simply bypass the same arguments received in the\n{{#crossLink \"Render/render:method\"}}{{/crossLink}} method.",
+                    "type": "Any",
+                    "optional": true,
+                    "multiple": true
+                }
+            ],
+            "class": "Render"
+        },
+        {
+            "file": "src/Render.js",
+            "line": 97,
+            "description": "Helper method to trigger the render post-call of a model. It is usually\nused from the {{#crossLink \"Render/postRender:method\"}}{{/crossLink}}\nmethod.",
+            "itemtype": "method",
+            "name": "delegateToPostRender",
+            "params": [
+                {
+                    "name": "model",
+                    "description": "Model in which delegate.",
+                    "type": "Model"
+                },
+                {
+                    "name": "args",
+                    "description": "The parameters passed to the render post-call of the\nmodel. It is convinient to simply bypass the same arguments received in the\n{{#crossLink \"Render/postRender:method\"}}{{/crossLink}} method.",
+                    "type": "Any",
+                    "optional": true,
+                    "multiple": true
                 }
             ],
             "class": "Render"
         },
         {
             "file": "src/Simulator.js",
-            "line": 30,
+            "line": 34,
             "description": "Delegate on {{#crossLink \"Simulator/simulate:method\"}}{{/crossLink}}\nor {{#crossLink \"Simulator/postSimulate:method\"}}{{/crossLink}}\ndepending on the first component of `args` parameter which determine\nif this invocation is the pre-call or the post-call.\nThe method passes all the arguments to the delegated methods except\n`isPostCall` flag which is replaced by the model being simulated.\n\nThe function follows the signature of `Function.prototype.apply()`.",
             "itemtype": "method",
             "name": "apply",
@@ -708,7 +750,7 @@
         },
         {
             "file": "src/Simulator.js",
-            "line": 55,
+            "line": 59,
             "description": "Performs the pre-call for the model's simulation. You can use the last\nparameter, the `update()` callback, to delay model updates after the\ncompletion of simulation stage (i.e, **after pre and post calls**):\n\n    GameOfLife.prototype.simulate = function (model, t, dt, update) {\n      // Read the model...\n      var aliveNeightbours = this.getAliveNeightbours(model);\n      update(function () {\n        // Update the model...\n        if (model.isAlive && aliveNeightbours < 3) {\n          model.isAlive = false;\n        }\n      });\n    };",
             "itemtype": "method",
             "name": "simulate",
@@ -738,7 +780,7 @@
         },
         {
             "file": "src/Simulator.js",
-            "line": 81,
+            "line": 85,
             "description": "Performs the post-call for the model's simulation. You can use the last\nparameter, the `update()` callback, to delay model updates after the\ncompletion of simulation stage.\nSee {{#crossLink \"Simulator/simulate:method\"}}{{/crossLink}} for an usage\nexample.",
             "itemtype": "method",
             "name": "postSimulate",

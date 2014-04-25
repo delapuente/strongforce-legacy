@@ -23,6 +23,10 @@ define([
    *     GameOfLife.prototype.constructor = GameOfLife;
    *
    * @class Simulator
+   * @param model {Model} The model for which this functor is being
+   * instantiated.
+   * @param [modelParameters]* {Any} The same parameters passed to the model
+   * constructor.
    * @constructor
    */
   function Simulator() { }
