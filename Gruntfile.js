@@ -16,7 +16,7 @@ module.exports = function(grunt) {
   ];
 
   var specFiles = [
-    '<%= dirs.test %>/spec/**/*.js'
+    '<%= dirs.spec %>/**/*.js'
   ];
 
   var banner = [
@@ -50,6 +50,7 @@ module.exports = function(grunt) {
     },
 
     files: {
+      testRunner: '<%= dirs.test %>/spec_runner.js',
       build: '<%= dirs.bin %>/<%= libname %>.js',
       buildMin: '<%= dirs.bin %>/<%= libname %>.min.js',
       preBuild: '<%= dirs.tmp %>/<%= libname %>.js',
@@ -191,11 +192,11 @@ module.exports = function(grunt) {
         tasks: ['jshint']
       },
       test: {
-        files: srcFiles.concat(specFiles),
+        files: srcFiles.concat(specFiles).concat('<%= files.testRunner %>'),
         tasks: ['connect:test', 'mocha']
       },
       debug: {
-        files: srcFiles.concat(specFiles),
+        files: srcFiles.concat(specFiles).concat('<%= files.testRunner %>'),
         tasks: [],
         options: {
           livereload: 35729
