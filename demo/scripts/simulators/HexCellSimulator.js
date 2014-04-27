@@ -13,38 +13,38 @@ this.define([
   };
 
   function HexCellSimulator() {
-    this.waitForTick = TICK_TIME;
+    this._waitForTick = TICK_TIME;
   }
   S.theClass(HexCellSimulator).inheritsFrom(Simulator);
 
   HexCellSimulator.prototype.simulate = function (model, t, dt, update) {
-    this.waitForTick -= dt;
-    if (this.waitForTick > 0) { return; }
+    this._waitForTick -= dt;
+    if (this._waitForTick > 0) { return; }
 
-    this.waitForTick += TICK_TIME;
-    this.nexGeneration(model, update);
+    this._waitForTick += TICK_TIME;
+    this._nextGeneration(model, update);
   };
 
-  HexCellSimulator.prototype.nexGeneration = function (model, update) {
-    var aliveCount = model.getAliveNeightboursCount();
-    if (model.alive && !this.survive(aliveCount)) {
+  HexCellSimulator.prototype._nextGeneration = function (model, update) {
+    var aliveCount = model.neighborhood.getAliveNeighbours();
+    if (model.alive && !this._survive(aliveCount)) {
       update(function() {
         model.alive = false;
       });
     }
 
-    else if (!model.alive && this.born(aliveCount)) {
+    else if (!model.alive && this._born(aliveCount)) {
       update(function() {
         model.alive = true;
       });
     }
   };
 
-  HexCellSimulator.prototype.survive = function (aliveCount) {
+  HexCellSimulator.prototype._survive = function (aliveCount) {
     return RULE.survive.indexOf(aliveCount) > -1;
   };
 
-  HexCellSimulator.prototype.born = function (aliveCount) {
+  HexCellSimulator.prototype._born = function (aliveCount) {
     return RULE.born.indexOf(aliveCount) > -1;
   };
 

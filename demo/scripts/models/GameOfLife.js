@@ -1,71 +1,21 @@
 this.define([
   'scaffolding',
   'strongforce',
+  'models/Neighborhood',
   'models/Hexagon',
   'models/HexCell'
-], function(S, strongforce, Hexagon, HexCell) {
+], function(S, strongforce, Neighborhood, Hexagon, HexCell) {
   'use strict';
 
   var Model = strongforce.Model,
-      FOSSIL_CELL,
-      selectDirection;
+      FOSSIL_CELL;
 
   // Ad-hoc completely dead (no render / no behaviour) cell
   FOSSIL_CELL = new HexCell([-1, -1], 0, [0, 0], false);
   FOSSIL_CELL.render = undefined;
   FOSSIL_CELL.simulate = undefined;
 
-  selectDirection = {
-    N: function(cellId) {
-      return [
-        cellId[0] - 2,
-        cellId[1]
-      ];
-    },
-    NE: function(cellId) {
-      return [
-        cellId[0] - 1,
-        cellId[1] + (1 - cellId[0] % 2)
-      ];
-    },
-    SE: function(cellId) {
-      return [
-        cellId[0] + 1,
-        cellId[1] + (1 - cellId[0] % 2)
-      ];
-    },
-    S: function(cellId) {
-      return [
-        cellId[0] + 2,
-        cellId[1]
-      ];
-    },
-    SW: function(cellId) {
-      return [
-        cellId[0] + 1,
-        cellId[1] - cellId[0] % 2
-      ];
-    },
-    NW: function(cellId) {
-      return [
-        cellId[0] - 1,
-        cellId[1] - cellId[0] % 2
-      ];
-    }
-  };
-
-  function GameOfLife(side, cellRadius, center) {
-    var self = this;
-
-    var BOARD_SIZE = 150,
-        START_OF_THE_FILL_AREA = Math.sqrt(3) * cellRadius * (side - 1),
-        board = [], cols, rows;
-
-    var background, cells = [];
-
-    setupFrame();
-    setupBoard();
-    var sample =
+  var sample =
            '0' +
           '0 0' +
          '0 0 0' +
@@ -104,46 +54,31 @@ this.define([
           '0 0' +
            '0';
 
+  function GameOfLife(side, cellRadius, center) {
+    var self = this;
+
+    var BOARD_SIZE = 150,
+        START_OF_THE_FILL_AREA = Math.sqrt(3) * cellRadius * (side - 1),
+        board = [], cols, rows;
+
+    self._background = null;
+    self._cells = [];
+
+    setupFrame();
+    setupBoard();
     setupInitialConfiguration(sample);
 
-    self.getSubmodels = getSubmodels;
-    self.getNeighbourhood = getNeighbourhood;
-
     Model.call(self);
-
-    function getSubmodels() {
-      return [background].concat(cells);
-    }
-
-    function getNeighbourhood(cellId) {
-      return [
-        getNeighbour(cellId, 'N'),
-        getNeighbour(cellId, 'NE'),
-        getNeighbour(cellId, 'SE'),
-        getNeighbour(cellId, 'S'),
-        getNeighbour(cellId, 'SW'),
-        getNeighbour(cellId, 'NW')
-      ];
-    }
-
-    function getNeighbour(cellId, direction) {
-      direction = direction.toUpperCase();
-      var neighbourId = selectDirection[direction](cellId),
-          r = neighbourId[0], c = neighbourId[1],
-          isOutOfBounds = r < 0 || r >= rows || c < 0 || c >= cols;
-
-      return isOutOfBounds ? FOSSIL_CELL : board[r][c];
-    }
 
     function setupFrame() {
       var board = new Hexagon(BOARD_SIZE, center);
       board.fillColor = 'white';
       board.rotation = Math.PI / 2;
-      background = board;
+      self._background = board;
     }
 
     function setupBoard() {
-      var cell, cellId,
+      var cell, neighborhood, cellId,
           isRowOdd, evenRowStartingX, oddRowStartingX,
           x, y, stepX, stepY;
 
@@ -162,37 +97,22 @@ this.define([
         x = isRowOdd ? oddRowStartingX : evenRowStartingX;
         for (var c = 0; c < cols; c++) {
           cellId = [r, c];
+          neighborhood = new Neighborhood(board, cellId);
           cell = isOutOfTheHexagon(r, c) ?
                  FOSSIL_CELL :
                  new HexCell(cellId, 0.9 * cellRadius, [x, y]);
-          extendCellForSimulation(cell);
+          cell.neighborhood = neighborhood;
           board[r][c] = cell;
-          cells.push(cell);
+          self._cells.push(cell);
           x += stepX;
         }
         y += stepY;
       }
     }
 
-    function extendCellForSimulation(cell) {
-      cell.getAliveNeightboursCount = getAliveNeightboursCount;
-
-      function getAliveNeightboursCount() {
-        var aliveCount = 0,
-            /* jshint validthis:true */
-            neighbourhood = self.getNeighbourhood(this.cellId);
-        for (var i = 0, l = neighbourhood.length; i < l; i++) {
-          if (neighbourhood[i].alive) {
-            aliveCount++;
-          }
-        }
-        return aliveCount;
-      }
-    }
-
     // Consider a hexagon as:
-    // A top triangle:      /\
-    // A central zone:     | |
+    // A top triangle:     /\
+    // A central zone:     ||
     // A bottom triangle:  \/
     function isOutOfTheHexagon(r, c) {
       var topBoundary, bottomBoundary,
@@ -261,6 +181,10 @@ this.define([
     }
   }
   S.theClass(GameOfLife).inheritsFrom(Model);
+
+  GameOfLife.prototype.getSubmodels = function getSubmodels() {
+    return [this._background].concat(this._cells);
+  };
 
   return GameOfLife;
 });
