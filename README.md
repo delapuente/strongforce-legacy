@@ -18,17 +18,29 @@ Or grab the [source](https://raw.githubusercontent.com/lodr/strongforce/master/d
 
 Include a script tag in your project...
 
-    <script href="/path/to/strongforce.js" type="text/javascript"></script>
+```html
+<script href="/path/to/strongforce.js" type="text/javascript"></script>
+```
     
 The entry point is the global variable `strongforce`.
 
 Or load it with [requirejs](http://requirejs.org/):
 
-    require(['/path/to/strongforce'], function (strongforce) { ... });
+```html
+require(['/path/to/strongforce'], function (strongforce) { ... });
+```
+    
+### Avoiding collisions
+
+If for some reason you already have a `strongforce` global variable in your global namespace. You can call `strongforce.restore()` to get the strongforce instance and restore the former value of the `strongforce` variable.
+
+```javascript
+var myNameForStrongforce = strongforce.restore();
+```
     
 ### Server environments
 
-Strongforce requires `requestAnimationFrame()` as a global dependency which is usually not supported in non browser scenarios. I'm working to mitigate this limitation by providing a polyfill function. Stay tuned!
+Strongforce requires `window.requestAnimationFrame()` as a global dependency which is usually not supported in non browser scenarios. I'm working to mitigate this limitation by providing a polyfill function. Stay tuned!
 
 ## Documentation
 
@@ -42,7 +54,7 @@ Any contribution is welcome, just:
 * Have a clear and documented rationale for your changes.
 * Package these up in a pull request.
 
-In addition, take a look at the wiki pages for settting up the development environment, passing tests and so on.
+In addition, take a look at the wiki pages for settting up the development environment, passing tests, running grunt and so on.
 
 ## License
 
