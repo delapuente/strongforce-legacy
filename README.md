@@ -26,7 +26,7 @@ The entry point is the global variable `strongforce`.
 
 Or load it with [requirejs](http://requirejs.org/):
 
-```html
+```javascript
 require(['/path/to/strongforce'], function (strongforce) { ... });
 ```
     
