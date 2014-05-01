@@ -4,9 +4,16 @@
   "main": "dist/strongforce.js",
   "license": "MIT",
   "ignore": [
-    "*",
-    "!dist/**",
-    "!docs/**"
+    "build",
+    "demo",
+    ".editorconfig",
+    ".gitattributes",
+    ".gitignore",
+    "Gruntfile.js",
+    ".jshintrc",
+    "node_modules",
+    "src",
+    "test"
   ],
   "keywords": [
     "game-engine",
