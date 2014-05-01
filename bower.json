@@ -5,8 +5,8 @@
   "license": "MIT",
   "ignore": [
     "*",
-    "!dist",
-    "!docs"
+    "!dist/**",
+    "!docs/**"
   ],
   "keywords": [
     "game-engine",
