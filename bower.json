@@ -1,6 +1,6 @@
 {
   "name": "strongforce",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "dist/strongforce.js",
   "license": "MIT",
   "ignore": [

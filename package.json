@@ -1,6 +1,6 @@
 {
   "name": "strongforce",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "dist/strongforce.min.js",
   "description": "Strongforce is a light-weight framework to build game engines. It provides a backbone for a powerful game loop and helper classes for efficiently implement the game actors.",
   "repository": {
