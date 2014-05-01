@@ -60,6 +60,18 @@ module.exports = function(grunt) {
 
     pkg: grunt.file.readJSON('package.json'),
 
+    clean: {
+      docs: {
+        src: ['docs/*']
+      },
+      dist: {
+        src: ['dist/*']
+      },
+      temp: {
+        src: ['.tmp/*']
+      }
+    },
+
     concat: {
       options: {
         separator: '\n\n'
@@ -79,9 +91,7 @@ module.exports = function(grunt) {
       options: {
         // Change this to '0.0.0.0' to access the server from outside
         hostname: '0.0.0.0',
-        open: {
-          appName: 'google-chrome-stable'
-        }
+        open: true
       },
       test: {
         options: {
@@ -221,14 +231,17 @@ module.exports = function(grunt) {
 
   grunt.registerTask('default', ['docs', 'lint', 'test', 'pack', 'min']);
   grunt.registerTask('dist', ['docs', 'pack', 'min']);
-  grunt.registerTask('docs', ['yuidoc']);
+  grunt.registerTask('docs', ['clean:docs', 'yuidoc']);
   grunt.registerTask('lint', ['jshint']);
   grunt.registerTask('test', ['connect:test', 'mocha']);
   grunt.registerTask('tests', ['test']);
   grunt.registerTask('pack', [
+    'clean:dist',
+    'clean:temp',
     'requirejs:pack',
     'concat:pack',
-    'copy:pack'
+    'copy:pack',
+    'clean:temp'
   ]);
   grunt.registerTask('min', ['uglify:pack']);
   grunt.registerTask('dev', ['watch']);

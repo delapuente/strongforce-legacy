@@ -1,12 +1,28 @@
 {
   "name": "strongforce",
-  "version": "0.1.0",
-  "main": "dist/strongforce.min.js",
+  "version": "1.0.0",
+  "main": "dist/strongforce.js",
+  "license": "MIT",
   "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test"
+    "*"
+    "!dist",
+    "!docs"
   ],
+  "keywords": [
+    "game-engine",
+    "simulation",
+    "game-loop",
+    "loop",
+    "fps",
+    "framework"
+  ],
+  "authors": [
+    "Salvador de la Puente González <salva@unoyunodiez.com> (http://unoyunodiez.com)"
+  ],
+  "homepage": "https://github.com/lodr/strongforce",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/lodr/strongforce.git"
+  },
   "dependencies": { }
 }
