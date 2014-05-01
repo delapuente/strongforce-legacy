@@ -13,7 +13,9 @@
     ".jshintrc",
     "node_modules",
     "src",
-    "test"
+    "test",
+    "git-hooks",
+    "package.json"
   ],
   "keywords": [
     "game-engine",
