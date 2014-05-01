@@ -4,7 +4,7 @@ Strongforce is a light-weight framework to build game engines. It provides a bac
 
 ## Example
 
-The [Hexagonal Conway's Game of Life](http://lodr.github.io/strongforce#gameoflife) in the header of the project's page is a real example of strongforce in action.
+The [Hexagonal Conway's Game of Life](https://rawgit.com/lodr/strongforce/master/demo/index.html) is a real example of strongforce in action.
 
 ## Installation
 
@@ -12,7 +12,7 @@ Using Bower:
 
     bower install strongforce
 
-Or grab the [source](https://github.com/lodr/strongforce/dist/strongforce.js) ([minified](https://github.com/lodr/strongforce/dist/strongforce.min.js)).
+Or grab the [source](https://raw.githubusercontent.com/lodr/strongforce/master/dist/strongforce.js) ([minified](https://raw.githubusercontent.com/lodr/strongforce/master/dist/strongforce.min.js)).
 
 ## Usage
 
@@ -32,7 +32,7 @@ Strongforce requires `requestAnimationFrame()` as a global dependency which is u
 
 ## Documentation
 
-Start by reaading the rationale behind strongforce, then try to understand the annotated sources of the example and use API documentation whenever you want.
+Start by reaading the rationale behind strongforce, then take a look to the [sources of the demo](https://github.com/lodr/strongforce/tree/master/demo/scripts) and use the [API documentation](http://rawgit.com/lodr/strongforce/master/docs/index.html) whenever you want.
 
 ## Contributing
 
@@ -41,6 +41,8 @@ Any contribution is welcome, just:
 * Provide a comprehensive suite of tests for your fork.
 * Have a clear and documented rationale for your changes.
 * Package these up in a pull request.
+
+In addition, take a look at the wiki pages for settting up the development environment, passing tests and so on.
 
 ## License
 
