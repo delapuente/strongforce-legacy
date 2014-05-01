@@ -2,7 +2,7 @@
     "project": {
         "name": "strongforce",
         "description": "Strongforce is a light-weight framework to build game engines. It provides a backbone for a powerful game loop and helper classes for efficiently implement the game actors.",
-        "version": "0.1.0",
+        "version": "1.0.0",
         "url": "https://github.com/lodr/strongforce"
     },
     "files": {
