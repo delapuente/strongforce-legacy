@@ -44,7 +44,7 @@ Strongforce requires `window.requestAnimationFrame()` as a global dependency whi
 
 ## Documentation
 
-Start by reaading the rationale behind strongforce, then take a look to the [sources of the demo](https://github.com/lodr/strongforce/tree/master/demo/scripts) and use the [API documentation](http://rawgit.com/lodr/strongforce/master/docs/index.html) whenever you want.
+Start by reading the [rationale behind strongforce](https://github.com/lodr/strongforce/wiki/Rationale), then take a look to the [sources of the demo](https://github.com/lodr/strongforce/tree/master/demo/scripts) and use the [API documentation](http://rawgit.com/lodr/strongforce/master/docs/index.html) whenever you want.
 
 ## Contributing
 
@@ -54,7 +54,7 @@ Any contribution is welcome, just:
 * Have a clear and documented rationale for your changes.
 * Package these up in a pull request.
 
-In addition, take a look at the wiki pages for settting up the development environment, passing tests, running grunt and so on.
+In addition, take a look at the wiki pages for [setting up the development environment](https://github.com/lodr/strongforce/wiki/The-development-environment), passing tests, running grunt and so on.
 
 ## License
 
