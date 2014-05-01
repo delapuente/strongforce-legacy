@@ -3,19 +3,7 @@
   "version": "1.0.0",
   "main": "dist/strongforce.js",
   "license": "MIT",
-  "ignore": [
-    "build",
-    "demo",
-    ".editorconfig",
-    ".gitattributes",
-    ".gitignore",
-    "Gruntfile.js",
-    ".jshintrc",
-    "node_modules",
-    "src",
-    "test"
-  ],
-  "keywords": [
+ "keywords": [
     "game-engine",
     "simulation",
     "game-loop",
