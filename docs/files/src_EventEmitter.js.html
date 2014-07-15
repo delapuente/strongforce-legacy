@@ -121,9 +121,12 @@ define([
     Object.defineProperty(this, &#x27;_listeners&#x27;, { value: {} });
 
     /**
-     * Dispatch the event received modifying the &#x60;currentTarget&#x60; property to
-     * point to the current EventEmitter instance. The method is bound to the
-     * instance to allow to be used as callback.
+     * Bound version of
+     * {{#crossLink &quot;EventEmitter/_bubbleEvent:method&quot;}}{{/crossLink}}
+     * method. This bound version allow the
+     * porxy to be naturally unique as calls to
+     * {{#crossLink &quot;EventEmitter/addEventListener:method&quot;}}{{/crossLink}}
+     * with same arguments are ignored.
      *
      * @method _boundBubbleEvent
      * @param evt {StrongforceModelEvent} the event to be dispatched.
@@ -175,6 +178,15 @@ define([
     this._listeners[type] = newListeners;
   };
 
+  /**
+   * Makes the current instance to dispatch an event each time the other
+   * emitter, passed as parameter, dispatches an event. All properties from
+   * the original event are kepts unaltered except the &#x60;currentTarget&#x60;
+   * property which is updated to point the current instance.
+   *
+   * @method proxyEventsFrom
+   * @param anotherEmitter {EventEmitter} the emitter to be proxied.
+   */
   EventEmitter.prototype.proxyEventsFrom = function (anotherEmitter) {
     if (!anotherEmitter ||
         typeof anotherEmitter.addEventListener !== &#x27;function&#x27;) {
@@ -185,10 +197,14 @@ define([
   };
 
   /**
-   * Dispatch the event received modifying the &#x60;currentTarget&#x60; property to
-   * point to the current EventEmitter instance.
+   * Dispatch a new event based on another received from an EventEmitter
+   * instance being proxied by this instance. The &#x60;currentTarget&#x60; property is
+   * updated to the current instance.
    *
-   * @method _boundBubbleEvent
+   * This implementation is not directly used as it needs to be bound to
+   * the current instance. This is done in the constructor.
+   *
+   * @method _bubbleEvent
    * @param evt {StrongforceModelEvent} the event to be dispatched.
    * @private
    */
@@ -252,7 +268,7 @@ define([
   /**
    * Remove all listeners for an event type.
    *
-   * @method removeEventListener
+   * @method removeAllEventListener
    * @param type {String} The type of the event for which the listener
    * will be removed.
    */

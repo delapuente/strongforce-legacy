@@ -593,9 +593,12 @@ define('EventEmitter',[
     Object.defineProperty(this, '_listeners', { value: {} });
 
     /**
-     * Dispatch the event received modifying the `currentTarget` property to
-     * point to the current EventEmitter instance. The method is bound to the
-     * instance to allow to be used as callback.
+     * Bound version of
+     * {{#crossLink "EventEmitter/_bubbleEvent:method"}}{{/crossLink}}
+     * method. This bound version allow the
+     * porxy to be naturally unique as calls to
+     * {{#crossLink "EventEmitter/addEventListener:method"}}{{/crossLink}}
+     * with same arguments are ignored.
      *
      * @method _boundBubbleEvent
      * @param evt {StrongforceModelEvent} the event to be dispatched.
@@ -647,6 +650,15 @@ define('EventEmitter',[
     this._listeners[type] = newListeners;
   };
 
+  /**
+   * Makes the current instance to dispatch an event each time the other
+   * emitter, passed as parameter, dispatches an event. All properties from
+   * the original event are kepts unaltered except the `currentTarget`
+   * property which is updated to point the current instance.
+   *
+   * @method proxyEventsFrom
+   * @param anotherEmitter {EventEmitter} the emitter to be proxied.
+   */
   EventEmitter.prototype.proxyEventsFrom = function (anotherEmitter) {
     if (!anotherEmitter ||
         typeof anotherEmitter.addEventListener !== 'function') {
@@ -657,10 +669,14 @@ define('EventEmitter',[
   };
 
   /**
-   * Dispatch the event received modifying the `currentTarget` property to
-   * point to the current EventEmitter instance.
+   * Dispatch a new event based on another received from an EventEmitter
+   * instance being proxied by this instance. The `currentTarget` property is
+   * updated to the current instance.
    *
-   * @method _boundBubbleEvent
+   * This implementation is not directly used as it needs to be bound to
+   * the current instance. This is done in the constructor.
+   *
+   * @method _bubbleEvent
    * @param evt {StrongforceModelEvent} the event to be dispatched.
    * @private
    */
@@ -724,7 +740,7 @@ define('EventEmitter',[
   /**
    * Remove all listeners for an event type.
    *
-   * @method removeEventListener
+   * @method removeAllEventListener
    * @param type {String} The type of the event for which the listener
    * will be removed.
    */

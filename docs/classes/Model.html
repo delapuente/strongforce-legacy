@@ -242,8 +242,15 @@ GameOfLifeBoard.prototype.getSubmodels = function () {
 
                     <ul class="index-list methods">
                         
-                            <li class="index-item method private inherited inherited">
+                            <li class="index-item method private inherited">
                                 <a href="#method__boundBubbleEvent">_boundBubbleEvent</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method private inherited">
+                                <a href="#method__bubbleEvent">_bubbleEvent</a>
 
                                 
                                 
@@ -291,7 +298,21 @@ GameOfLifeBoard.prototype.getSubmodels = function () {
                                 
                             </li>
                         
-                            <li class="index-item method inherited inherited">
+                            <li class="index-item method inherited">
+                                <a href="#method_proxyEventsFrom">proxyEventsFrom</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method inherited">
+                                <a href="#method_removeAllEventListener">removeAllEventListener</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method inherited">
                                 <a href="#method_removeEventListener">removeEventListener</a>
 
                                 
@@ -412,12 +433,9 @@ GameOfLifeBoard.prototype.getSubmodels = function () {
 
     <div class="meta">
         
-            <p>Inherited from
-            <a href="../classes/EventEmitter.html#method__boundBubbleEvent">
-                EventEmitter
-            </a>
             
-            but overwritten in
+                <p>Inherited from
+                <a href="../classes/EventEmitter.html#method__boundBubbleEvent">EventEmitter</a>:
             
         
         
@@ -432,9 +450,104 @@ GameOfLifeBoard.prototype.getSubmodels = function () {
     </div>
 
     <div class="description">
-        <p>Dispatch the event received modifying the <code>currentTarget</code> property to
-point to the current EventEmitter instance. The method is bound to the
-instance to allow to be used as callback.</p>
+        <p>Bound version of
+<a href="../classes/EventEmitter.html#method__bubbleEvent" class="crosslink">_bubbleEvent</a>
+method. This bound version allow the
+porxy to be naturally unique as calls to
+<a href="../classes/EventEmitter.html#method_addEventListener" class="crosslink">addEventListener</a>
+with same arguments are ignored.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">evt</code>
+                        <span class="type"><a href="../classes/StrongforceModelEvent.html" class="crosslink">StrongforceModelEvent</a></span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>the event to be dispatched.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method__bubbleEvent" class="method item private inherited">
+    <h3 class="name"><code>_bubbleEvent</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>evt</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+        <span class="flag private">private</span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/EventEmitter.html#method__bubbleEvent">EventEmitter</a>:
+            
+        
+        
+        <a href="../files/src_EventEmitter.js.html#l99"><code>src&#x2F;EventEmitter.js:99</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Dispatch a new event based on another received from an EventEmitter
+instance being proxied by this instance. The <code>currentTarget</code> property is
+updated to the current instance.</p>
+<p>This implementation is not directly used as it needs to be bound to
+the current instance. This is done in the constructor.</p>
 
     </div>
 
@@ -517,7 +630,7 @@ instance to allow to be used as callback.</p>
             
         
         
-        <a href="../files/src_EventEmitter.js.html#l55"><code>src&#x2F;EventEmitter.js:55</code></a>
+        <a href="../files/src_EventEmitter.js.html#l58"><code>src&#x2F;EventEmitter.js:58</code></a>
         
         </p>
 
@@ -633,7 +746,7 @@ will be executed.</p>
             
         
         
-        <a href="../files/src_EventEmitter.js.html#l102"><code>src&#x2F;EventEmitter.js:102</code></a>
+        <a href="../files/src_EventEmitter.js.html#l118"><code>src&#x2F;EventEmitter.js:118</code></a>
         
         </p>
 
@@ -764,7 +877,7 @@ executed only once and automatically removed after the execution.</p>
             
         
         
-        <a href="../files/src_EventEmitter.js.html#l38"><code>src&#x2F;EventEmitter.js:38</code></a>
+        <a href="../files/src_EventEmitter.js.html#l41"><code>src&#x2F;EventEmitter.js:41</code></a>
         
         </p>
 
@@ -1054,6 +1167,182 @@ signature.</p>
 </div>
 
                 
+                    <div id="method_proxyEventsFrom" class="method item inherited">
+    <h3 class="name"><code>proxyEventsFrom</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>anotherEmitter</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/EventEmitter.html#method_proxyEventsFrom">EventEmitter</a>:
+            
+        
+        
+        <a href="../files/src_EventEmitter.js.html#l81"><code>src&#x2F;EventEmitter.js:81</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Makes the current instance to dispatch an event each time the other
+emitter, passed as parameter, dispatches an event. All properties from
+the original event are kepts unaltered except the <code>currentTarget</code>
+property which is updated to point the current instance.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">anotherEmitter</code>
+                        <span class="type"><a href="../classes/EventEmitter.html" class="crosslink">EventEmitter</a></span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>the emitter to be proxied.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_removeAllEventListener" class="method item inherited">
+    <h3 class="name"><code>removeAllEventListener</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>type</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/EventEmitter.html#method_removeAllEventListener">EventEmitter</a>:
+            
+        
+        
+        <a href="../files/src_EventEmitter.js.html#l168"><code>src&#x2F;EventEmitter.js:168</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Remove all listeners for an event type.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">type</code>
+                        <span class="type">String</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>The type of the event for which the listener
+will be removed.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+                
                     <div id="method_removeEventListener" class="method item inherited">
     <h3 class="name"><code>removeEventListener</code></h3>
 
@@ -1093,16 +1382,13 @@ signature.</p>
 
     <div class="meta">
         
-            <p>Inherited from
-            <a href="../classes/EventEmitter.html#method_removeEventListener">
-                EventEmitter
-            </a>
             
-            but overwritten in
+                <p>Inherited from
+                <a href="../classes/EventEmitter.html#method_removeEventListener">EventEmitter</a>:
             
         
         
-        <a href="../files/src_EventEmitter.js.html#l130"><code>src&#x2F;EventEmitter.js:130</code></a>
+        <a href="../files/src_EventEmitter.js.html#l146"><code>src&#x2F;EventEmitter.js:146</code></a>
         
         </p>
 
