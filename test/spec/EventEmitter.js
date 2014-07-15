@@ -59,17 +59,77 @@ define([], function () {
 
       it('allow to add callbacks for listening only once.', function() {
         var callCount = 0,
-            event = {},
             model = new EventEmitter();
 
         function callback() { callCount++; }
         model.addEventListener('anytype', callback, true);
 
-        model.dispatchEvent('anytype', event);
-        model.dispatchEvent('anytype', event);
+        model.dispatchEvent('anytype', {});
+        model.dispatchEvent('anytype', {});
 
         expect(callCount).to.equal(1);
       });
+
+      it('allow to listen for an event of any type', function () {
+        var events = [],
+            model = new EventEmitter();
+
+        function callback(evt) { events.push(evt); }
+        model.addEventListener('*', callback);
+
+        model.dispatchEvent('anytype', {});
+        model.dispatchEvent('anotherType', {});
+
+        expect(events.length).to.equal(2);
+        expect(events[0].type).to.equal('anytype');
+        expect(events[1].type).to.equal('anotherType');
+      });
+
+      it('allow to listen for an event of any type once', function () {
+        var events = [],
+            model = new EventEmitter();
+
+        function callback(evt) { events.push(evt); }
+        model.addEventListener('*', callback, true);
+
+        model.dispatchEvent('anytype', {});
+        model.dispatchEvent('anotherType', {});
+
+        expect(events.length).to.equal(1);
+        expect(events[0].type).to.equal('anytype');
+      });
+
+      it('allow to proxy the events from other EventEmitter instance',
+        function() {
+          var modelTarget, modelCurrentTarget,
+              proxyTarget, proxyCurrentTarget,
+              event = {},
+              model = new EventEmitter(),
+              proxy = new EventEmitter();
+
+          function callbackForModel(evt) {
+            modelTarget = evt.target;
+            modelCurrentTarget = evt.currentTarget;
+          }
+
+          function callbackForProxy(evt) {
+            proxyTarget = evt.target;
+            proxyCurrentTarget = evt.currentTarget;
+          }
+
+          proxy.proxyEventsFrom(model);
+          model.addEventListener('*', callbackForModel);
+          proxy.addEventListener('*', callbackForProxy);
+
+          model.dispatchEvent('anytype', event);
+
+          expect(modelTarget).to.equal(model);
+          expect(modelTarget).to.equal(modelCurrentTarget);
+
+          expect(proxyTarget).to.equal(modelTarget);
+          expect(proxyCurrentTarget).to.equal(proxy);
+        }
+      );
 
     });
   });

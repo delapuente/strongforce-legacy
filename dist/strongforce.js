@@ -591,6 +591,20 @@ define('EventEmitter',[
      * @final
      */
     Object.defineProperty(this, '_listeners', { value: {} });
+
+    /**
+     * Dispatch the event received modifying the `currentTarget` property to
+     * point to the current EventEmitter instance. The method is bound to the
+     * instance to allow to be used as callback.
+     *
+     * @method _boundBubbleEvent
+     * @param evt {StrongforceModelEvent} the event to be dispatched.
+     * @private
+     * @final
+     */
+    Object.defineProperty(this, '_boundBubbleEvent', {
+      value: this._bubbleEvent.bind(this)
+    });
   }
 
   /**
@@ -602,10 +616,12 @@ define('EventEmitter',[
    */
   EventEmitter.prototype.dispatchEvent = function(type, event) {
     event = event || {};
-    event.type = type;
-    event.target = this;
-    event.timestamp = Date.now();
+    Object.defineProperty(event, 'type', { value: type });
+    Object.defineProperty(event, 'target', { value: this });
+    Object.defineProperty(event, 'currentTarget', { value: this });
+    Object.defineProperty(event, 'timestamp', { value: Date.now() });
     this._runListeners(type, event);
+    this._runListeners('*', event);
   };
 
   /**
@@ -631,10 +647,36 @@ define('EventEmitter',[
     this._listeners[type] = newListeners;
   };
 
+  EventEmitter.prototype.proxyEventsFrom = function (anotherEmitter) {
+    if (!anotherEmitter ||
+        typeof anotherEmitter.addEventListener !== 'function') {
+      return;
+    }
+
+    anotherEmitter.addEventListener('*', this._boundBubbleEvent);
+  };
+
+  /**
+   * Dispatch the event received modifying the `currentTarget` property to
+   * point to the current EventEmitter instance.
+   *
+   * @method _boundBubbleEvent
+   * @param evt {StrongforceModelEvent} the event to be dispatched.
+   * @private
+   */
+  EventEmitter.prototype._bubbleEvent = function (evt) {
+    var newEvt = Object.create(evt);
+    Object.defineProperty(newEvt, 'currentTarget', { value: this });
+    this._runListeners(newEvt.type, newEvt);
+    this._runListeners('*', newEvt);
+  };
+
   /**
    * Add a listener for an event type to be executed synchronously every time
    * the model emits an event of the provided type. You can optionally indicate
    * the listener should run only once.
+   *
+   * You can listen for any kind of event specifying `*` as type.
    *
    * @method addEventListener
    * @param type {String} The type of the event for which the listener

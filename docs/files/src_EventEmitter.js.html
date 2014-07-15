@@ -19,7 +19,7 @@
             
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 1.0.0</em>
+            <em>API Docs for: 1.0.4</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -119,6 +119,20 @@ define([
      * @final
      */
     Object.defineProperty(this, &#x27;_listeners&#x27;, { value: {} });
+
+    /**
+     * Dispatch the event received modifying the &#x60;currentTarget&#x60; property to
+     * point to the current EventEmitter instance. The method is bound to the
+     * instance to allow to be used as callback.
+     *
+     * @method _boundBubbleEvent
+     * @param evt {StrongforceModelEvent} the event to be dispatched.
+     * @private
+     * @final
+     */
+    Object.defineProperty(this, &#x27;_boundBubbleEvent&#x27;, {
+      value: this._bubbleEvent.bind(this)
+    });
   }
 
   /**
@@ -130,10 +144,12 @@ define([
    */
   EventEmitter.prototype.dispatchEvent = function(type, event) {
     event = event || {};
-    event.type = type;
-    event.target = this;
-    event.timestamp = Date.now();
+    Object.defineProperty(event, &#x27;type&#x27;, { value: type });
+    Object.defineProperty(event, &#x27;target&#x27;, { value: this });
+    Object.defineProperty(event, &#x27;currentTarget&#x27;, { value: this });
+    Object.defineProperty(event, &#x27;timestamp&#x27;, { value: Date.now() });
     this._runListeners(type, event);
+    this._runListeners(&#x27;*&#x27;, event);
   };
 
   /**
@@ -159,10 +175,36 @@ define([
     this._listeners[type] = newListeners;
   };
 
+  EventEmitter.prototype.proxyEventsFrom = function (anotherEmitter) {
+    if (!anotherEmitter ||
+        typeof anotherEmitter.addEventListener !== &#x27;function&#x27;) {
+      return;
+    }
+
+    anotherEmitter.addEventListener(&#x27;*&#x27;, this._boundBubbleEvent);
+  };
+
+  /**
+   * Dispatch the event received modifying the &#x60;currentTarget&#x60; property to
+   * point to the current EventEmitter instance.
+   *
+   * @method _boundBubbleEvent
+   * @param evt {StrongforceModelEvent} the event to be dispatched.
+   * @private
+   */
+  EventEmitter.prototype._bubbleEvent = function (evt) {
+    var newEvt = Object.create(evt);
+    Object.defineProperty(newEvt, &#x27;currentTarget&#x27;, { value: this });
+    this._runListeners(newEvt.type, newEvt);
+    this._runListeners(&#x27;*&#x27;, newEvt);
+  };
+
   /**
    * Add a listener for an event type to be executed synchronously every time
    * the model emits an event of the provided type. You can optionally indicate
    * the listener should run only once.
+   *
+   * You can listen for any kind of event specifying &#x60;*&#x60; as type.
    *
    * @method addEventListener
    * @param type {String} The type of the event for which the listener
