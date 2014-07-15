@@ -2,7 +2,7 @@
     "project": {
         "name": "strongforce",
         "description": "Strongforce is a light-weight framework to build game engines. It provides a backbone for a powerful game loop and helper classes for efficiently implement the game actors.",
-        "version": "1.0.4",
+        "version": "1.1.0",
         "url": "https://github.com/lodr/strongforce"
     },
     "files": {
@@ -80,7 +80,7 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src/EventEmitter.js",
-            "line": 181,
+            "line": 185,
             "description": "The type of data received by a listener attached by using\n{{#crossLink \"EventEmitter/addEventListener:method\"}}{{/crossLink}}."
         },
         "LoopOptions": {
@@ -189,7 +189,7 @@
     "classitems": [
         {
             "file": "src/EventEmitter.js",
-            "line": 13,
+            "line": 15,
             "description": "Keeps the list of listeners by event type.",
             "itemtype": "property",
             "name": "_listeners",
@@ -201,7 +201,7 @@
         },
         {
             "file": "src/EventEmitter.js",
-            "line": 23,
+            "line": 25,
             "description": "Bound version of\n{{#crossLink \"EventEmitter/_bubbleEvent:method\"}}{{/crossLink}}\nmethod. This bound version allow the\nporxy to be naturally unique as calls to\n{{#crossLink \"EventEmitter/addEventListener:method\"}}{{/crossLink}}\nwith same arguments are ignored.",
             "itemtype": "method",
             "name": "_boundBubbleEvent",
@@ -219,7 +219,7 @@
         },
         {
             "file": "src/EventEmitter.js",
-            "line": 41,
+            "line": 45,
             "description": "Emit an event from the instance.",
             "itemtype": "method",
             "name": "dispatchEvent",
@@ -241,7 +241,7 @@
         },
         {
             "file": "src/EventEmitter.js",
-            "line": 58,
+            "line": 62,
             "description": "Synchronously run the listeners for an event type removing _only once_\nlisteners.",
             "itemtype": "method",
             "name": "_runListeners",
@@ -263,7 +263,7 @@
         },
         {
             "file": "src/EventEmitter.js",
-            "line": 81,
+            "line": 85,
             "description": "Makes the current instance to dispatch an event each time the other\nemitter, passed as parameter, dispatches an event. All properties from\nthe original event are kepts unaltered except the `currentTarget`\nproperty which is updated to point the current instance.",
             "itemtype": "method",
             "name": "proxyEventsFrom",
@@ -278,7 +278,7 @@
         },
         {
             "file": "src/EventEmitter.js",
-            "line": 99,
+            "line": 103,
             "description": "Dispatch a new event based on another received from an EventEmitter\ninstance being proxied by this instance. The `currentTarget` property is\nupdated to the current instance.\n\nThis implementation is not directly used as it needs to be bound to\nthe current instance. This is done in the constructor.",
             "itemtype": "method",
             "name": "_bubbleEvent",
@@ -295,7 +295,7 @@
         },
         {
             "file": "src/EventEmitter.js",
-            "line": 118,
+            "line": 122,
             "description": "Add a listener for an event type to be executed synchronously every time\nthe model emits an event of the provided type. You can optionally indicate\nthe listener should run only once.\n\nYou can listen for any kind of event specifying `*` as type.",
             "itemtype": "method",
             "name": "addEventListener",
@@ -322,7 +322,7 @@
         },
         {
             "file": "src/EventEmitter.js",
-            "line": 146,
+            "line": 150,
             "description": "Remove one listener for the specified event type.",
             "itemtype": "method",
             "name": "removeEventListener",
@@ -342,7 +342,7 @@
         },
         {
             "file": "src/EventEmitter.js",
-            "line": 168,
+            "line": 172,
             "description": "Remove all listeners for an event type.",
             "itemtype": "method",
             "name": "removeAllEventListener",
@@ -357,7 +357,7 @@
         },
         {
             "file": "src/EventEmitter.js",
-            "line": 188,
+            "line": 192,
             "description": "The model dispatching the event.",
             "itemtype": "property",
             "name": "target",
@@ -366,7 +366,7 @@
         },
         {
             "file": "src/EventEmitter.js",
-            "line": 195,
+            "line": 199,
             "description": "The type of the event.",
             "itemtype": "property",
             "name": "type",
@@ -375,7 +375,7 @@
         },
         {
             "file": "src/EventEmitter.js",
-            "line": 202,
+            "line": 206,
             "description": "The moment at which the event has been dispatched.",
             "itemtype": "property",
             "name": "timestamp",

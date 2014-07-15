@@ -10,6 +10,8 @@ define([
    * @constructor
    */
   function EventEmitter() {
+    var self = this;
+
     /**
      * Keeps the list of listeners by event type.
      *
@@ -34,7 +36,9 @@ define([
      * @final
      */
     Object.defineProperty(this, '_boundBubbleEvent', {
-      value: this._bubbleEvent.bind(this)
+      value: function (evt) {
+        self._bubbleEvent(evt);
+      }
     });
   }
 
