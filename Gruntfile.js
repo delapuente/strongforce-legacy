@@ -128,7 +128,7 @@ module.exports = function(grunt) {
         options: {
           process: function (content) {
             var target = '"mappings": "';
-            var offset = 46;
+            var offset = 45; // line count of build/_intro.js + 2 from concat
             var padding = new Array(offset + 1).join(';');
             return content.replace(target, target + padding);
           }
